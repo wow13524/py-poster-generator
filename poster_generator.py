@@ -1,14 +1,8 @@
 import argparse
-import json
+import poster_template
 import sys
-from typing import Any, List
-
-def _load_json(file_path: str) -> Any:
-    try:
-        with open(file_path) as f:
-            return json.load(f)
-    except Exception:
-        raise argparse.ArgumentTypeError("Invalid .json file")
+import type_utils
+from typing import List
 
 def _parse_args(args: List[str]) -> argparse.Namespace:
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
@@ -16,7 +10,6 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "template",
-        type=_load_json,
         help="path of the desired poster template"
     )
     parser.add_argument(
@@ -29,3 +22,5 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
 if __name__ == "__main__":
     args: argparse.Namespace = _parse_args(sys.argv[1:])
     print(args)
+
+    model: poster_template.PosterTemplateModel = type_utils.parse_file(args.template,poster_template.PosterTemplateModel)
