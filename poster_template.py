@@ -1,6 +1,6 @@
 import argparse
 import type_utils
-from typing import Any,Dict,List,Optional,Union,cast
+from typing import Any,Dict,List,Optional,Union
 
 class PosterTemplateMetaArg(type_utils.PropertyDict):
     name_or_flags: Union[str,List[str]]
@@ -48,5 +48,3 @@ class PosterTemplate:
     @property
     def height(self) -> int:
         return self._model.meta.height
-    
-    
