@@ -24,3 +24,4 @@ if __name__ == "__main__":
     print(args)
 
     model: poster_template.PosterTemplateModel = type_utils.parse_file(args.template,poster_template.PosterTemplateModel)
+    print(model.meta.args[0].nargs)
