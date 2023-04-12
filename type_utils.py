@@ -2,6 +2,7 @@
 # ^ the type of typeguard.check_type ironically can't be inferred :P
 
 import json
+from pydoc import locate
 from typeguard import check_type
 from typing import Any,Dict,Generator,List,Literal,Optional,Tuple,Type,TypeVar,Union,cast,get_args,get_origin,get_type_hints
 
@@ -51,3 +52,8 @@ def parse_file(file_path: str, config_type: Type[T]) -> T:
         data: Dict[str,Any] = json.load(f)
     properties: T = config_type(data,config_type.__name__)
     return properties
+
+def parse_type(type_string: str) -> Type[Any]:
+    tp: Any = locate(type_string)
+    assert isinstance(tp,Type), f"invalid type {type_string}"
+    return tp
