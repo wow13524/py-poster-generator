@@ -9,9 +9,9 @@ class GetArg(Expression):
         self._name = self.name
     
     def evaluate(self,context: LogicContent) -> Any:
-        return context[self._name]
+        return context["args"][self._name]
 
-class Store(Expression):
+class SetVar(Expression):
     name: str
     value: AbstractExpression
 
@@ -21,4 +21,4 @@ class Store(Expression):
         self._value = parse_expression(expressions,self.value)
     
     def evaluate(self,context: LogicContent) -> Any:
-        context[self._name] = self._value.evaluate(context)
+        context["vars"][self._name] = self._value.evaluate(context)

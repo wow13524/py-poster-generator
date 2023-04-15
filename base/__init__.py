@@ -1,6 +1,6 @@
-from .expressions import GetArg,Store
+from .expressions import GetArg,SetVar
 
 expressions = [
     GetArg,
-    Store
+    SetVar
 ]
