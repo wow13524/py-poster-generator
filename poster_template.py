@@ -1,6 +1,12 @@
 import argparse
+import importlib
 import type_utils
-from typing import Any,Dict,List,Optional,Union
+from plugin_api import AbstractExpression,Expression,parse_expression
+from typing import Any,Dict,List,Optional,Type,Union
+
+DEFAULT_REQUIRED: List[str] = [
+    "base"
+]
 
 class PosterTemplateMetaArg(type_utils.PropertyDict):
     name_or_flags: Union[str,List[str]]
@@ -15,15 +21,31 @@ class PosterTemplateMetaArg(type_utils.PropertyDict):
 class PosterTemplateMeta(type_utils.PropertyDict):
     name: str
     args: List[PosterTemplateMetaArg]
+    required: List[str]
     width: int
     height: int
 
 class PosterTemplateModel(type_utils.PropertyDict):
     meta: PosterTemplateMeta
+    logic: List[AbstractExpression]
+
+def _get_required_expressions(required: List[str]) -> Dict[str,Type[Expression]]:
+    expressions: Dict[str,Type[Expression]] = {}
+    required = DEFAULT_REQUIRED + required
+    for plugin_name in required:
+        module: Any = importlib.import_module(plugin_name)
+        if hasattr(module, "expressions"):
+            expressions = {**expressions, **{
+                f"{module.__name__}.{expression.__qualname__}": expression for expression in module.expressions
+            }}
+    return expressions
 
 class PosterTemplate:
     def __init__(self,model: PosterTemplateModel) -> None:
+        expressions: Dict[str,Type[Expression]] = _get_required_expressions(model.meta.required)
+        print(expressions)
         self._model = model
+        self._logic = [parse_expression(expressions,raw_expression) for raw_expression in model.logic]
         self._parser: argparse.ArgumentParser = argparse.ArgumentParser(self.name)
 
         for arg in model.meta.args:

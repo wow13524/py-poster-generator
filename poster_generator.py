@@ -21,8 +21,9 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
 
 if __name__ == "__main__":
     args: argparse.Namespace = _parse_args(sys.argv[1:])
-    print(args)
+    print(vars(args))
 
     model: poster_template.PosterTemplateModel = type_utils.parse_file(args.template,poster_template.PosterTemplateModel)
-    print(model.meta.args[0].nargs)
     template: poster_template.PosterTemplate = poster_template.PosterTemplate(model)
+    print(dict(model))
+    print(template.__dict__)
