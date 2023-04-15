@@ -1,4 +1,4 @@
-from plugin_api import AbstractExpression,Expression,parse_expression
+from plugin_api import AbstractExpression,Expression,LogicContent,parse_expression
 from typing import Any,Dict,Type
 
 class GetArg(Expression):
@@ -8,8 +8,8 @@ class GetArg(Expression):
         super().__init__(expressions,raw)
         self._name = self.name
     
-    def evaluate(self) -> Any:
-        return self._name
+    def evaluate(self,context: LogicContent) -> Any:
+        return context[self._name]
 
 class Store(Expression):
     name: str
@@ -20,5 +20,5 @@ class Store(Expression):
         self._name = self.name
         self._value = parse_expression(expressions,self.value)
     
-    def evaluate(self) -> Any:
-        return self._value.evaluate()
+    def evaluate(self,context: LogicContent) -> Any:
+        context[self._name] = self._value.evaluate(context)

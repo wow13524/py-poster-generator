@@ -1,6 +1,8 @@
 from type_utils import PropertyDict
 from typing import Any,Dict,Type
 
+LogicContent = Dict[str,Any]
+
 class AbstractExpression(PropertyDict):
     action: str
 
@@ -16,7 +18,7 @@ class Expression(PropertyDict):
     def __init__(self,expressions: Dict[str,Type['Expression']],raw: Dict[str,Any]) -> None:
         super().__init__(raw,self.__class__.__name__)
 
-    def evaluate(self: 'Expression') -> Any:
+    def evaluate(self: 'Expression',context: LogicContent) -> Any:
         pass
 
 def parse_expression(expressions: Dict[str,Type[Expression]],raw_expression: AbstractExpression) -> Expression:
