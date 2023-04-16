@@ -38,16 +38,6 @@ def _get_plugin(plugin_name: str) -> Plugin:
         CACHED_PLUGINS[plugin] = plugin()
     return CACHED_PLUGINS[plugin]
 
-def _get_required_expressions(required: List[str]) -> Dict[str,Type[Expression]]:
-    expressions: Dict[str,Type[Expression]] = {}
-    required = DEFAULT_REQUIRED + required
-    for plugin_name in required:
-        plugin: Plugin = _get_plugin(plugin_name)
-        expressions = {**expressions, **{
-            f"{plugin.__class__.__name__}.{expression.__qualname__}": expression for expression in plugin.expressions
-        }}
-    return expressions
-
 def _parse_logic(plugins: List[Plugin],raw_expressions: List[RawExpression]) -> List[Expression]:
     expression_map: Dict[str,ExpressionType] = {}
     for plugin in plugins:
@@ -56,8 +46,6 @@ def _parse_logic(plugins: List[Plugin],raw_expressions: List[RawExpression]) -> 
 
 class PosterTemplate:
     def __init__(self,model: PosterTemplateModel) -> None:
-        expressions: Dict[str,Type[Expression]] = _get_required_expressions(model.meta.required)
-        print(expressions)
         self._model = model
         self._plugins = [_get_plugin(plugin_name) for plugin_name in DEFAULT_REQUIRED+model.meta.required]
         self._logic = _parse_logic(self._plugins,model.logic)
