@@ -2,7 +2,7 @@ import argparse
 import importlib
 import type_utils
 from plugin_api import Expression,ExpressionType,Plugin,PluginType,RawExpression,parse_expression
-from typing import Any,Dict,List,Optional,Type,Union
+from typing import Any,Dict,List,Optional,Union
 
 CACHED_PLUGINS: Dict[PluginType,Plugin] = {}
 DEFAULT_REQUIRED: List[str] = [

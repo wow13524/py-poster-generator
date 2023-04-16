@@ -1,5 +1,5 @@
 from type_utils import PropertyDict
-from typing import Any,Dict,List,Type
+from typing import Any,Dict,Generator,List,Tuple,Type
 
 LogicContent = Dict[Any,Any]
 ExpressionType = Type['Expression']
@@ -15,8 +15,12 @@ class RawExpression(PropertyDict):
     @property
     def raw(self) -> Dict[str,Any]:
         return self._raw
+    
+    def __iter__(self) -> Generator[Tuple[str,Any],None,None]:
+        for key,value in self.raw.items():
+            yield key,value
 
-class Expression(PropertyDict):
+class Expression(RawExpression):
     def __init__(self,expressions: Dict[str,ExpressionType],raw: Dict[str,Any]) -> None:
         super().__init__(raw,self.__class__.__name__)
 
