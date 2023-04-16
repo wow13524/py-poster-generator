@@ -1,9 +1,10 @@
 import argparse
 import importlib
 import type_utils
-from plugin_api import RawExpression,Expression,parse_expression
+from plugin_api import Expression,Plugin,PluginType,RawExpression,parse_expression
 from typing import Any,Dict,List,Optional,Type,Union
 
+CACHED_PLUGINS: Dict[PluginType,Plugin] = {}
 DEFAULT_REQUIRED: List[str] = [
     "base"
 ]
@@ -29,15 +30,21 @@ class PosterTemplateModel(type_utils.PropertyDict):
     meta: PosterTemplateMeta
     logic: List[RawExpression]
 
+def _get_plugin(plugin_name: str) -> Plugin:
+    module: Any = importlib.import_module(plugin_name)
+    plugin: PluginType = getattr(module,"export_plugin")
+    if plugin not in CACHED_PLUGINS:
+        CACHED_PLUGINS[plugin] = plugin()
+    return CACHED_PLUGINS[plugin]
+
 def _get_required_expressions(required: List[str]) -> Dict[str,Type[Expression]]:
     expressions: Dict[str,Type[Expression]] = {}
     required = DEFAULT_REQUIRED + required
     for plugin_name in required:
-        module: Any = importlib.import_module(plugin_name)
-        if hasattr(module,"plugin_expressions"):
-            expressions = {**expressions, **{
-                f"{module.__name__}.{expression.__qualname__}": expression for expression in module.plugin_expressions
-            }}
+        plugin: Plugin = _get_plugin(plugin_name)
+        expressions = {**expressions, **{
+            f"{plugin.__class__.__name__}.{expression.__qualname__}": expression for expression in plugin.expressions
+        }}
     return expressions
 
 class PosterTemplate:

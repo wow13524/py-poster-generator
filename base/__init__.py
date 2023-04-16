@@ -1,8 +1,4 @@
-from .expressions import GetArg,SetVar
-from plugin_api import Expression
-from typing import List,Type
+from .plugin import Base
+from plugin_api import PluginType
 
-plugin_expressions: List[Type[Expression]] = [
-    GetArg,
-    SetVar
-]
+export_plugin: PluginType = Base

@@ -1,7 +1,9 @@
 from type_utils import PropertyDict
-from typing import Any,Dict,Type
+from typing import Any,Dict,List,Type,TypeVar
 
-LogicContent = Dict[str,Any]
+LogicContent = Dict[Any,Any]
+PluginType = Type['Plugin']
+T = TypeVar("T",bound="Expression")
 
 class RawExpression(PropertyDict):
     action: str
@@ -23,3 +25,14 @@ class Expression(PropertyDict):
 
 def parse_expression(expressions: Dict[str,Type[Expression]],raw_expression: RawExpression) -> Expression:
     return expressions[raw_expression.action](expressions,raw_expression.raw)
+
+class Plugin:
+    expressions: List[Type[Expression]] = []
+    
+    @staticmethod
+    def expression(expression: Type[T]) -> Type[T]:
+        __class__.expressions.append(expression)
+        return expression
+    
+    def context(self) -> LogicContent:
+        return {}

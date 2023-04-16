@@ -1,6 +1,17 @@
-from plugin_api import RawExpression,Expression,LogicContent,parse_expression
+from plugin_api import Expression,LogicContent,Plugin,RawExpression,parse_expression
 from typing import Any,Dict,Type
 
+class Base(Plugin):
+    def __init__(self) -> None:
+        pass
+    
+    def context(self) -> LogicContent:
+        return {
+            "args": {},
+            "vars": {}
+        }
+
+@Plugin.expression
 class GetArg(Expression):
     name: str
 
@@ -11,6 +22,7 @@ class GetArg(Expression):
     def evaluate(self,context: LogicContent) -> Any:
         return context["args"][self._name]
 
+@Plugin.expression
 class SetVar(Expression):
     name: str
     value: RawExpression
