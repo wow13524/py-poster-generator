@@ -1,6 +1,8 @@
 from .expressions import GetArg,SetVar
+from plugin_api import Expression
+from typing import List,Type
 
-expressions = [
+plugin_expressions: List[Type[Expression]] = [
     GetArg,
     SetVar
 ]

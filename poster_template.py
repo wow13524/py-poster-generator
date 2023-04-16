@@ -34,9 +34,9 @@ def _get_required_expressions(required: List[str]) -> Dict[str,Type[Expression]]
     required = DEFAULT_REQUIRED + required
     for plugin_name in required:
         module: Any = importlib.import_module(plugin_name)
-        if hasattr(module, "expressions"):
+        if hasattr(module,"plugin_expressions"):
             expressions = {**expressions, **{
-                f"{module.__name__}.{expression.__qualname__}": expression for expression in module.expressions
+                f"{module.__name__}.{expression.__qualname__}": expression for expression in module.plugin_expressions
             }}
     return expressions
 
