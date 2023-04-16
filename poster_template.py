@@ -33,6 +33,7 @@ class PosterTemplateModel(type_utils.PropertyDict):
 def _get_plugin(plugin_name: str) -> Plugin:
     module: Any = importlib.import_module(plugin_name)
     plugin: PluginType = getattr(module,"export_plugin")
+    assert issubclass(plugin,Plugin), f"{plugin_name} is not a subclass of Plugin"
     if plugin not in CACHED_PLUGINS:
         CACHED_PLUGINS[plugin] = plugin()
     return CACHED_PLUGINS[plugin]
