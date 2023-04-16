@@ -1,7 +1,7 @@
 import argparse
 import importlib
 import type_utils
-from plugin_api import AbstractExpression,Expression,parse_expression
+from plugin_api import RawExpression,Expression,parse_expression
 from typing import Any,Dict,List,Optional,Type,Union
 
 DEFAULT_REQUIRED: List[str] = [
@@ -27,7 +27,7 @@ class PosterTemplateMeta(type_utils.PropertyDict):
 
 class PosterTemplateModel(type_utils.PropertyDict):
     meta: PosterTemplateMeta
-    logic: List[AbstractExpression]
+    logic: List[RawExpression]
 
 def _get_required_expressions(required: List[str]) -> Dict[str,Type[Expression]]:
     expressions: Dict[str,Type[Expression]] = {}

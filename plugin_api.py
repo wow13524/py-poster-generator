@@ -3,7 +3,7 @@ from typing import Any,Dict,Type
 
 LogicContent = Dict[str,Any]
 
-class AbstractExpression(PropertyDict):
+class RawExpression(PropertyDict):
     action: str
 
     def __init__(self,data: Dict[str,Any],path: str) -> None:
@@ -21,5 +21,5 @@ class Expression(PropertyDict):
     def evaluate(self: 'Expression',context: LogicContent) -> Any:
         pass
 
-def parse_expression(expressions: Dict[str,Type[Expression]],raw_expression: AbstractExpression) -> Expression:
+def parse_expression(expressions: Dict[str,Type[Expression]],raw_expression: RawExpression) -> Expression:
     return expressions[raw_expression.action](expressions,raw_expression.raw)

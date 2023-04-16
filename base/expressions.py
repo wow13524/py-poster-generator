@@ -1,4 +1,4 @@
-from plugin_api import AbstractExpression,Expression,LogicContent,parse_expression
+from plugin_api import RawExpression,Expression,LogicContent,parse_expression
 from typing import Any,Dict,Type
 
 class GetArg(Expression):
@@ -13,7 +13,7 @@ class GetArg(Expression):
 
 class SetVar(Expression):
     name: str
-    value: AbstractExpression
+    value: RawExpression
 
     def __init__(self,expressions: Dict[str,Type[Expression]],raw: Dict[str,Any]) -> None:
         super().__init__(expressions,raw)
