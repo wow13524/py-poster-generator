@@ -1,9 +1,9 @@
 from type_utils import PropertyDict
-from typing import Any,Dict,List,Type,TypeVar
+from typing import Any,Dict,List,Type
 
 LogicContent = Dict[Any,Any]
+ExpressionType = Type['Expression']
 PluginType = Type['Plugin']
-T = TypeVar("T",bound="Expression")
 
 class RawExpression(PropertyDict):
     action: str
@@ -17,22 +17,28 @@ class RawExpression(PropertyDict):
         return self._raw
 
 class Expression(PropertyDict):
-    def __init__(self,expressions: Dict[str,Type['Expression']],raw: Dict[str,Any]) -> None:
+    def __init__(self,expressions: Dict[str,ExpressionType],raw: Dict[str,Any]) -> None:
         super().__init__(raw,self.__class__.__name__)
 
     def evaluate(self: 'Expression',context: LogicContent) -> Any:
         pass
 
-def parse_expression(expressions: Dict[str,Type[Expression]],raw_expression: RawExpression) -> Expression:
+def parse_expression(expressions: Dict[str,ExpressionType],raw_expression: RawExpression) -> Expression:
     return expressions[raw_expression.action](expressions,raw_expression.raw)
 
 class Plugin:
-    expressions: List[Type[Expression]] = []
-    
-    @staticmethod
-    def expression(expression: Type[T]) -> Type[T]:
-        __class__.expressions.append(expression)
+    @classmethod
+    def expression(cls: PluginType,expression: ExpressionType) -> ExpressionType:
+        assert cls is not __class__, "expressions should be registered using @PLUGIN_CLASS.expression, not @Plugin.expression"
+        if not hasattr(cls,"_expressions"):
+            setattr(cls,"_expressions",[])
+        expressions: List[ExpressionType] = getattr(cls,"_expressions")
+        expressions.append(expression)
         return expression
     
     def context(self) -> LogicContent:
         return {}
+    
+    @property
+    def expressions(self) -> List[ExpressionType]:
+        return getattr(self.__class__,"_expressions",[])

@@ -11,7 +11,7 @@ class Base(Plugin):
             "vars": {}
         }
 
-@Plugin.expression
+@Base.expression
 class GetArg(Expression):
     name: str
 
@@ -22,7 +22,7 @@ class GetArg(Expression):
     def evaluate(self,context: LogicContent) -> Any:
         return context["args"][self._name]
 
-@Plugin.expression
+@Base.expression
 class SetVar(Expression):
     name: str
     value: RawExpression
