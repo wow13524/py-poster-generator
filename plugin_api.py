@@ -27,6 +27,11 @@ class Expression(RawExpression):
     def evaluate(self: 'Expression',context: LogicContent) -> Any:
         pass
 
+    @property
+    @classmethod
+    def plugin(cls: ExpressionType) -> PluginType:
+        return getattr(cls,"_plugin")
+
 def parse_expression(expressions: Dict[str,ExpressionType],raw_expression: RawExpression) -> Expression:
     return expressions[raw_expression.action](expressions,raw_expression.raw)
 
@@ -34,6 +39,9 @@ class Plugin:
     @classmethod
     def expression(cls: PluginType,expression: ExpressionType) -> ExpressionType:
         assert cls is not __class__, "expressions should be registered using @PLUGIN_CLASS.expression, not @Plugin.expression"
+        assert not hasattr(expression,"_plugin"), f"expression already registered under {getattr(expression,'_plugin').__name__}"
+        setattr(expression,"_plugin",cls)
+
         if not hasattr(cls,"_expressions"):
             setattr(cls,"_expressions",[])
         expressions: List[ExpressionType] = getattr(cls,"_expressions")
