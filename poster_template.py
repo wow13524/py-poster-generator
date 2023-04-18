@@ -1,6 +1,6 @@
-import argparse
 import importlib
 import type_utils
+from argparse import ArgumentParser
 from plugin_api import Expression,ExpressionType,Plugin,PluginType,RawExpression,parse_expression
 from typing import Any,Dict,List,Optional,Union
 
@@ -49,7 +49,7 @@ class PosterTemplate:
         self._model = model
         self._plugins = [_get_plugin(plugin_name) for plugin_name in DEFAULT_REQUIRED+model.meta.required]
         self._logic = _parse_logic(self._plugins,model.logic)
-        self._parser: argparse.ArgumentParser = argparse.ArgumentParser(self.name)
+        self._parser: ArgumentParser = ArgumentParser(self.name)
 
         for arg in model.meta.args:
             name_or_flags: List[str] = arg.name_or_flags if isinstance(arg.name_or_flags,List) else [arg.name_or_flags]
@@ -79,7 +79,7 @@ class PosterTemplate:
         return self._logic
 
     @property
-    def parser(self) -> argparse.ArgumentParser:
+    def parser(self) -> ArgumentParser:
         return self._parser
     
     @property
