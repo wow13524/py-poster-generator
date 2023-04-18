@@ -28,9 +28,8 @@ class Expression(RawExpression):
         pass
 
     @property
-    @classmethod
-    def plugin(cls: ExpressionType) -> PluginType:
-        return getattr(cls,"_plugin")
+    def plugin(self) -> PluginType:
+        return getattr(self.__class__,"_plugin")
 
 def parse_expression(expressions: Dict[str,ExpressionType],raw_expression: RawExpression) -> Expression:
     return expressions[raw_expression.action](expressions,raw_expression.raw)

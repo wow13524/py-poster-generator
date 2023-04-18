@@ -73,3 +73,15 @@ class PosterTemplate:
     @property
     def height(self) -> int:
         return self._model.meta.height
+    
+    @property
+    def logic(self) -> List[Expression]:
+        return self._logic
+
+    @property
+    def parser(self) -> argparse.ArgumentParser:
+        return self._parser
+    
+    @property
+    def plugins(self) -> List[Plugin]:
+        return self._plugins

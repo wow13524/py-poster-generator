@@ -1,8 +1,20 @@
 import argparse
-import poster_template
 import sys
 import type_utils
-from typing import List
+from base import Base
+from plugin_api import LogicContent,PluginType
+from poster_template import PosterTemplate,PosterTemplateModel
+from typing import Dict,List
+
+def _generate_poster(template: PosterTemplate,raw_args: List[str]) -> None:
+    args: argparse.Namespace = template.parser.parse_args(raw_args)
+    context: Dict[PluginType,LogicContent] = {plugin.__class__: plugin.context() for plugin in template.plugins}
+    context[Base]["args"] = vars(args)
+    
+    for expression in template.logic:
+        expression.evaluate(context[expression.plugin])
+    
+    print(context)
 
 def _parse_args(args: List[str]) -> argparse.Namespace:
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
@@ -21,9 +33,6 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
 
 if __name__ == "__main__":
     args: argparse.Namespace = _parse_args(sys.argv[1:])
-    print(vars(args))
-
-    model: poster_template.PosterTemplateModel = type_utils.parse_file(args.template,poster_template.PosterTemplateModel)
-    template: poster_template.PosterTemplate = poster_template.PosterTemplate(model)
-    print(dict(model))
-    print(template.__dict__)
+    model: PosterTemplateModel = type_utils.parse_file(args.template,PosterTemplateModel)
+    template: PosterTemplate = PosterTemplate(model)
+    _generate_poster(template,args.template_args)
