@@ -4,6 +4,7 @@ from typing import Any,Dict,Generator,List,Tuple,Type
 LogicContent = Dict[Any,Any]
 ExpressionType = Type['Expression']
 PluginType = Type['Plugin']
+PluginTypeList = List[PluginType]
 
 class RawExpression(PropertyDict):
     action: str

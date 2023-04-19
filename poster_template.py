@@ -30,13 +30,15 @@ class PosterTemplateModel(type_utils.PropertyDict):
     meta: PosterTemplateMeta
     logic: List[RawExpression]
 
-def _get_plugin(plugin_name: str) -> Plugin:
+def _get_plugin(plugin_name: str) -> List[Plugin]:
     module: Any = importlib.import_module(plugin_name)
-    plugin: PluginType = getattr(module,"export_plugin")
-    assert issubclass(plugin,Plugin), f"{plugin_name} is not a subclass of Plugin"
-    if plugin not in CACHED_PLUGINS:
-        CACHED_PLUGINS[plugin] = plugin()
-    return CACHED_PLUGINS[plugin]
+    plugins: List[PluginType] = getattr(module,"export_plugins")
+    assert type(plugins) == list, f"{plugin_name} missing list 'export_plugins'"
+    for plugin in plugins:
+        assert issubclass(plugin,Plugin), f"{plugin_name} is not a subclass of Plugin"
+        if plugin not in CACHED_PLUGINS:
+            CACHED_PLUGINS[plugin] = plugin()
+    return [CACHED_PLUGINS[plugin] for plugin in plugins]
 
 def _parse_logic(plugins: List[Plugin],raw_expressions: List[RawExpression]) -> List[Expression]:
     expression_map: Dict[str,ExpressionType] = {}
@@ -47,7 +49,7 @@ def _parse_logic(plugins: List[Plugin],raw_expressions: List[RawExpression]) -> 
 class PosterTemplate:
     def __init__(self,model: PosterTemplateModel) -> None:
         self._model = model
-        self._plugins = [_get_plugin(plugin_name) for plugin_name in DEFAULT_REQUIRED+model.meta.required]
+        self._plugins = [plugin for plugin_name in DEFAULT_REQUIRED+model.meta.required  for plugin in _get_plugin(plugin_name)]
         self._logic = _parse_logic(self._plugins,model.logic)
         self._parser: ArgumentParser = ArgumentParser(self.name)
 

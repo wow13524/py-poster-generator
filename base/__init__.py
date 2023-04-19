@@ -1,4 +1,4 @@
 from .plugin import Base
-from plugin_api import PluginType
+from plugin_api import PluginTypeList
 
-export_plugin: PluginType = Base
+export_plugins: PluginTypeList = [Base]
