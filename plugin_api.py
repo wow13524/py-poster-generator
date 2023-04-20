@@ -32,6 +32,21 @@ class Expression(RawExpression):
     def plugin(self) -> PluginType:
         return getattr(self.__class__,"_plugin")
 
+class RawElement(PropertyDict):
+    type: str
+    
+    def __init__(self,data: Dict[str,Any],path: str) -> None:
+        super().__init__(data,path)
+        self._raw = data
+    
+    @property
+    def raw(self) -> Dict[str,Any]:
+        return self._raw
+    
+    def __iter__(self) -> Generator[Tuple[str,Any],None,None]:
+        for key,value in self.raw.items():
+            yield key,value
+
 def parse_expression(expressions: Dict[str,ExpressionType],raw_expression: RawExpression) -> Expression:
     return expressions[raw_expression.action](expressions,raw_expression.raw)
 
