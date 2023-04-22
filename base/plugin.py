@@ -2,14 +2,18 @@ from plugin_api import Expression,LogicContent,Plugin,RawExpression,parse_expres
 from typing import Any,Dict,Type
 
 class Base(Plugin):
-    def __init__(self) -> None:
-        pass
-    
     def context(self) -> LogicContent:
         return {
             "args": {},
             "vars": {}
         }
+
+@Base.expression
+class Literal(Expression):
+    value: Any
+    
+    def evaluate(self,context: LogicContent) -> Any:
+        return self.value
 
 @Base.expression
 class GetArg(Expression):
