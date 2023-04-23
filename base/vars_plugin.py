@@ -1,22 +1,11 @@
 from plugin_api import Expression,LogicContent,Plugin,RawExpression,parse_expression
 from typing import Any,Dict,Type
 
-class Base(Plugin):
-    def context(self) -> LogicContent:
-        return {
-            "args": {},
-            "vars": {}
-        }
+class Vars(Plugin):
+    pass
 
-@Base.expression
-class Literal(Expression):
-    value: Any
-    
-    def evaluate(self,context: LogicContent) -> Any:
-        return self.value
-
-@Base.expression
-class GetArg(Expression):
+@Vars.expression
+class Get(Expression):
     name: str
 
     def __init__(self,expressions: Dict[str,Type[Expression]],raw: Dict[str,Any]) -> None:
@@ -24,10 +13,10 @@ class GetArg(Expression):
         self._name = self.name
     
     def evaluate(self,context: LogicContent) -> Any:
-        return context["args"][self._name]
+        return context[self._name]
 
-@Base.expression
-class SetVar(Expression):
+@Vars.expression
+class Set(Expression):
     name: str
     value: RawExpression
 
@@ -37,4 +26,4 @@ class SetVar(Expression):
         self._value = parse_expression(expressions,self.value)
     
     def evaluate(self,context: LogicContent) -> Any:
-        context["vars"][self._name] = self._value.evaluate(context)
+        context[self._name] = self._value.evaluate(context)
