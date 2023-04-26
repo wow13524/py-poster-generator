@@ -13,8 +13,6 @@ def _generate_poster(template: PosterTemplate,raw_args: List[str]) -> None:
     
     for expression in template.logic:
         expression.evaluate(context[expression.plugin])
-    
-    print(context)
 
 def _parse_args(args: List[str]) -> Namespace:
     parser: ArgumentParser = ArgumentParser(
