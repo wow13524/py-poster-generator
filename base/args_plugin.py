@@ -1,4 +1,4 @@
-from plugin_api import Expression,LogicContent,Plugin
+from plugin_api import ContextProvider,Expression,Plugin
 from typing import Any,Dict,Type
 
 class Args(Plugin):
@@ -12,5 +12,5 @@ class Get(Expression):
         super().__init__(expressions,raw)
         self._name = self.name
     
-    def evaluate(self,context: LogicContent) -> Any:
-        return context[self._name]
+    def evaluate(self,context_provider: ContextProvider) -> Any:
+        return context_provider.get(self)[self._name]

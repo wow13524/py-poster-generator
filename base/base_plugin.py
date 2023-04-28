@@ -1,4 +1,4 @@
-from plugin_api import Expression,LogicContent,Plugin
+from plugin_api import ContextProvider,Expression,Plugin
 from typing import Any
 
 class Base(Plugin):
@@ -8,5 +8,5 @@ class Base(Plugin):
 class Literal(Expression):
     value: Any
     
-    def evaluate(self,context: LogicContent) -> Any:
+    def evaluate(self,context_provider: ContextProvider) -> Any:
         return self.value

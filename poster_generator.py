@@ -2,19 +2,19 @@ import sys
 import type_utils
 from argparse import ArgumentParser,Namespace,REMAINDER
 from base import Args
-from plugin_api import LogicContent,PluginType
+from plugin_api import ContextProvider
 from poster_template import PosterTemplate,PosterTemplateModel
-from typing import Dict,List
+from typing import List
 
 def _generate_poster(template: PosterTemplate,raw_args: List[str]) -> None:
     args: Namespace = template.parser.parse_args(raw_args)
-    context: Dict[PluginType,LogicContent] = {plugin.__class__: plugin.context() for plugin in template.plugins}
-    context[Args] = vars(args)
+    context_provider: ContextProvider = ContextProvider(template.plugins)
+    context_provider.set(Args,vars(args))
     
     for expression in template.logic:
-        expression.evaluate(context[expression.plugin])
+        expression.evaluate(context_provider)
     
-    print(context)
+    print(context_provider.__dict__)
 
 def _parse_args(args: List[str]) -> Namespace:
     parser: ArgumentParser = ArgumentParser(
