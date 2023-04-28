@@ -24,9 +24,17 @@ class RawExpression(RawObject):
 class Expression(RawExpression):
     def __init__(self,expressions: Dict[str,ExpressionType],raw: Dict[str,Any]) -> None:
         super().__init__(raw,self.__class__.__name__)
+        self._evaluate = self.evaluate
+        self.evaluate = self.safe_evaluate
 
-    def evaluate(self: 'Expression',context_provider: 'ContextProvider') -> Any:
+    def evaluate(self,context_provider: 'ContextProvider') -> Any:
         pass
+
+    def safe_evaluate(self,context_provider: 'ContextProvider') -> Any:
+        try:
+            return self._evaluate(context_provider)
+        except:
+            raise Exception(f"an exception occurred while evaluating expression: {self.raw}\ncurrent plugin context: {context_provider.get(self)}")
 
     @property
     def plugin(self) -> PluginType:
