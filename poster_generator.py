@@ -1,20 +1,9 @@
 import sys
 import type_utils
 from argparse import ArgumentParser,Namespace,REMAINDER
-from base import Args
-from plugin_api import ContextProvider
+from poster_builder import PosterBuilder
 from poster_template import PosterTemplate,PosterTemplateModel
 from typing import List
-
-def _generate_poster(template: PosterTemplate,raw_args: List[str]) -> None:
-    args: Namespace = template.parser.parse_args(raw_args)
-    context_provider: ContextProvider = ContextProvider(template.plugins)
-    context_provider.set(Args,vars(args))
-    
-    for expression in template.logic:
-        expression.evaluate(context_provider)
-    
-    print(vars(context_provider))
 
 def _parse_args(args: List[str]) -> Namespace:
     parser: ArgumentParser = ArgumentParser(
@@ -35,4 +24,5 @@ if __name__ == "__main__":
     args: Namespace = _parse_args(sys.argv[1:])
     model: PosterTemplateModel = type_utils.parse_file(args.template,PosterTemplateModel)
     template: PosterTemplate = PosterTemplate(model)
-    _generate_poster(template,args.template_args)
+    builder: PosterBuilder = PosterBuilder(template,args.template_args)
+    builder.build().save("TEST.png")
