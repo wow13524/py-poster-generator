@@ -8,6 +8,7 @@ from typing import List
 class PosterBuilder:
     def __init__(self,template: PosterTemplate,raw_args: List[str]) -> None:
         args: Namespace = template.parser.parse_args(raw_args)
+        self._template: PosterTemplate = template
         self._context: ContextProvider = ContextProvider(template.plugins)
         self._context.set(Args,vars(args))
         
@@ -15,4 +16,4 @@ class PosterBuilder:
             expression.evaluate(self._context)
     
     def build(self) -> Image.Image:
-        return Image.new("RGB",(128,128))
+        return Image.new("RGB",(self._template.width,self._template.height))
