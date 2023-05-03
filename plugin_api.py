@@ -1,6 +1,8 @@
+from PIL import Image
 from type_utils import PropertyDict
 from typing import Any,Dict,Generator,List,Tuple,Type
 
+ElementType = Type['Element']
 ExpressionType = Type['Expression']
 PluginType = Type['Plugin']
 PluginTypeList = List[PluginType]
@@ -42,6 +44,24 @@ class Expression(RawExpression):
 
 class RawElement(RawObject):
     type: str
+    position: Tuple[int,int] = (0,0)
+    size: Tuple[int,int] = (64,64)
+    rotation: float = 0
+
+class Element(RawElement):
+    def __init__(self,elements: Dict[str,ElementType],raw: Dict[str,Any]) -> None:
+        super().__init__(raw,self.__class__.__name__)
+        self._build = self.build
+        self.build = self.safe_build
+    
+    def build(self,context_provider: 'ContextProvider') -> Image.Image:
+        return Image.new("RGB",(0,0))
+    
+    def safe_build(self,context_provider: 'ContextProvider') -> Any:
+        try:
+            return self._build(context_provider)
+        except:
+            raise Exception(f"an exception occurred while building element: {self.raw}")
 
 def parse_expression(expressions: Dict[str,ExpressionType],raw_expression: RawExpression) -> Expression:
     return expressions[raw_expression.action](expressions,raw_expression.raw)
