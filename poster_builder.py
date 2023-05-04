@@ -14,6 +14,8 @@ class PosterBuilder:
         
         for expression in template.logic:
             expression.evaluate(self._context)
+        
+        print(vars(self._context))
     
     def build(self) -> Image.Image:
         return Image.new("RGB",(self._template.width,self._template.height))
