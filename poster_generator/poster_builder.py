@@ -1,7 +1,7 @@
+from .context_provider import ActiveContext
+from .poster_template import PosterTemplate
 from argparse import Namespace
 from base import Args
-from plugin_api import ContextProvider
-from poster_template import PosterTemplate
 from PIL import Image
 from typing import List
 
@@ -9,11 +9,11 @@ class PosterBuilder:
     def __init__(self,template: PosterTemplate,raw_args: List[str]) -> None:
         args: Namespace = template.parser.parse_args(raw_args)
         self._template: PosterTemplate = template
-        self._context: ContextProvider = ContextProvider(template.plugins)
-        self._context.set(Args,vars(args))
+        self._context: ActiveContext = template.plugin_context.active_context()
+        self._context.set_context(Args, vars(args))
         
         for expression in template.logic:
-            expression.evaluate(self._context)
+            self._context.evaluate_expression(expression)
         
         print(vars(self._context))
     
