@@ -1,18 +1,18 @@
 from .raw_object import RawContent, RawObject
 from typing import Any, Callable, Dict, Type, cast
 
-ExpressionType = Type['Expression']
+ElementType = Type['Element']
 
-class RawExpression(RawObject):
-    action: str
+class RawElement(RawObject):
+    type: str
 
     def __init__(self, raw: RawContent, path: str = "") -> None:
         super().__init__(raw, path or self.__class__.__name__)
 
-class Expression(RawExpression):
+class Element(RawElement):
     @classmethod
-    def annotations(cls: ExpressionType) -> Dict[str, type]:
-        annotations: Dict[str, type] = cls.evaluate.__annotations__.copy()
+    def annotations(cls: ElementType) -> Dict[str, type]:
+        annotations: Dict[str, type] = cls.render.__annotations__.copy()
         if "self" in annotations:
             del annotations["self"]
         if "context" in annotations:
@@ -22,15 +22,15 @@ class Expression(RawExpression):
         return annotations
     
     @classmethod
-    def requires_context(cls: ExpressionType) -> bool:
-        return "context" in cls.evaluate.__annotations__
+    def requires_context(cls: ElementType) -> bool:
+        return "context" in cls.render.__annotations__
 
-    def __init__(self, raw: RawContent, children: Dict[str, 'Expression']) -> None:
+    def __init__(self, raw: RawContent, children: Dict[str, 'Element']) -> None:
         super().__init__(raw)
         self._children = children
     
     @property
-    def children(self) -> Dict[str, 'Expression']:
+    def children(self) -> Dict[str, 'Element']:
         return self._children
 
-    evaluate = cast(Callable[[Any], Any], None)
+    render = cast(Callable[[Any], Any], None)
