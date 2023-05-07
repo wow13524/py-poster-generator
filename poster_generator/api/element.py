@@ -1,4 +1,5 @@
 from .raw_object import RawContent, RawObject
+from pyvips import Image
 from typing import Any, Callable, Dict, Type, cast
 
 ElementType = Type['Element']
@@ -33,4 +34,4 @@ class Element(RawElement):
     def children(self) -> Dict[str, 'Element']:
         return self._children
 
-    render = cast(Callable[[Any], Any], None)
+    render = cast(Callable[[Any], Image], None)
