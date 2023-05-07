@@ -67,4 +67,4 @@ class PluginContext:
             except:
                 raise Exception(f"Failed to parse {key} in {raw_expression.raw}")
 
-        return expression_class(raw_expression.raw, parsed_children)
+        return expression_class(raw_expression, parsed_children)
