@@ -1,6 +1,7 @@
-from .raw_object import RawContent, NestedObject, RawObject
+from .expression import Expression
+from .raw_object import RawContent, RawObject
 from pyvips import Image
-from typing import Any, Callable, Dict, Type, cast
+from typing import Callable, Dict, Type, cast
 
 ElementType = Type['Element']
 
@@ -10,13 +11,9 @@ class RawElement(RawObject):
     def __init__(self, raw: RawContent, path: str = "") -> None:
         super().__init__(raw, path or self.__class__.__name__)
 
-class Element(NestedObject, RawObject):
-    @classmethod
-    def _target(cls: Type['Element']) -> Callable[..., Any]:
-        return cls.render
-
+class Element(Expression, RawElement):
     def __init__(self, raw_element: RawElement, children: Dict[str, 'Element']) -> None:
-        NestedObject.__init__(self, children)
-        RawObject.__init__(self, raw_element.raw, raw_element.type)
+        RawElement.__init__(self, raw_element.raw)
+        self._children = children
 
-    render = cast(Callable[..., Image], None)
+    evaluate = cast(Callable[..., Image], None)
