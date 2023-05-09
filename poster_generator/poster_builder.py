@@ -1,9 +1,10 @@
+import numpy as np
 from .context_provider import ActiveContext
 from .poster_template import PosterTemplate
 from argparse import Namespace
 from base import Args
-from PIL import Image
-from typing import List
+from pyvips import Image
+from typing import List, cast
 
 class PosterBuilder:
     def __init__(self,template: PosterTemplate,raw_args: List[str]) -> None:
@@ -17,5 +18,5 @@ class PosterBuilder:
         
         print(vars(self._context))
     
-    def build(self) -> Image.Image:
-        return Image.new("RGB",(self._template.width,self._template.height))
+    def build(self) -> Image:
+        return Image.new_from_array(np.zeros((self._template.height, self._template.width, 3), dtype=np.uint8))
