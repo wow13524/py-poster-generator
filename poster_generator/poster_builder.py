@@ -4,7 +4,7 @@ from .poster_template import PosterTemplate
 from argparse import Namespace
 from base import Args
 from pyvips import Image
-from typing import List, cast
+from typing import List
 
 class PosterBuilder:
     def __init__(self,template: PosterTemplate,raw_args: List[str]) -> None:
