@@ -1,3 +1,4 @@
+from .api.element import RawElement
 from .api.expression import Expression, RawExpression
 from .context_provider import PluginContext
 from .type_utils import PropertyDict, parse_type
@@ -24,6 +25,7 @@ class PosterTemplateMeta(PropertyDict):
 class PosterTemplateModel(PropertyDict):
     meta: PosterTemplateMeta
     logic: List[RawExpression]
+    content: List[RawElement]
 
 class PosterTemplate:
     def __init__(self, model: PosterTemplateModel) -> None:
