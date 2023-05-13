@@ -15,8 +15,6 @@ class PosterBuilder:
         
         for expression in template.logic:
             self._context.evaluate_expression(expression)
-        
-        print(vars(self._context))
     
     def build(self) -> Image:
         return Image.new_from_array(np.zeros((self._template.height, self._template.width, 3), dtype=np.uint8))
