@@ -13,6 +13,7 @@ def _parse_args(args: List[str]) -> Namespace:
         "-d", "--debug",
         action="store_true",
         default=False,
+        required=False,
         help="enable debug mode during poster generation"
     )
     parser.add_argument(
