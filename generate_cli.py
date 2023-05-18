@@ -7,7 +7,7 @@ from typing import List
 
 def _parse_args(args: List[str]) -> Namespace:
     parser: ArgumentParser = ArgumentParser(
-        description="Programmatically generate posters using templates and various online services."
+        description="Programmatically generate templated posters while leveraging plugin features."
     )
     parser.add_argument(
         "-d", "--debug",
