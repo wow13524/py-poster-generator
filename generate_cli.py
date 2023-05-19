@@ -30,4 +30,4 @@ if __name__ == "__main__":
     model: PosterTemplateModel = parse_file(args.template, PosterTemplateModel)
     template: PosterTemplate = PosterTemplate(model)
     builder: PosterBuilder = PosterBuilder(template, args.template_args)
-    builder.build().write_to_file("TEST.png")
+    builder.build().write_to_file(f"TEST{'_DEBUG' * args.debug}.png")
