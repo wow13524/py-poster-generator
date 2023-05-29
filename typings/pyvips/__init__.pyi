@@ -21,6 +21,9 @@ from .vregion import *
 from logging import Logger
 from typing import Any, Dict, Optional
 
+CData = base.CData
+GType = base.GType
+
 logger: Logger
 API_mode: bool
 
