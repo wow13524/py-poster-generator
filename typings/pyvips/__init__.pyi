@@ -22,6 +22,7 @@ from logging import Logger
 from typing import Any, Dict, Optional
 
 CData = base.CData
+GEnum = base.GEnum
 GType = base.GType
 
 logger: Logger
