@@ -44,16 +44,16 @@ class Operation(pyvips.VipsObject):
     This class wraps the libvips VipsOperation class.
 
     """
-    __slots__ = ...
-    _docstring_cache = ...
-    def __init__(self, pointer) -> None:
+    __slots__: Tuple[None]
+    _docstring_cache: Dict[str, str]
+    def __init__(self, pointer: pyvips.CData) -> None:
         ...
     
     @staticmethod
-    def new_from_name(operation_name): # -> Operation:
+    def new_from_name(operation_name: str) -> Operation:
         ...
     
-    def set(self, name, flags, match_image, value): # -> None:
+    def set(self, name, flags, match_image, value) -> None:
         ...
     
     @staticmethod
