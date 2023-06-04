@@ -53,7 +53,7 @@ class Operation(pyvips.VipsObject):
     def new_from_name(operation_name: str) -> Operation:
         ...
     
-    def set(self, name, flags, match_image, value) -> None:
+    def set(self, name: str, flags: int, match_image: pyvips.Image, value) -> None:
         ...
     
     @staticmethod
