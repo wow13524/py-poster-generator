@@ -70,7 +70,7 @@ class Operation(pyvips.VipsObject):
         ...
     
     @staticmethod
-    def generate_docstring(operation_name):
+    def generate_docstring(operation_name: str) -> str:
         """Make a google-style docstring.
 
         This is used to generate help() output.
@@ -79,7 +79,7 @@ class Operation(pyvips.VipsObject):
         ...
     
     @staticmethod
-    def generate_sphinx(operation_name):
+    def generate_sphinx(operation_name: str) -> str:
         """Make a sphinx-style docstring.
 
         This is used to generate the off-line docs.
@@ -88,7 +88,7 @@ class Operation(pyvips.VipsObject):
         ...
     
     @staticmethod
-    def generate_sphinx_all(): # -> None:
+    def generate_sphinx_all() -> None:
         """Generate sphinx documentation.
 
         This generates a .rst file for all auto-generated image methods. Use it
