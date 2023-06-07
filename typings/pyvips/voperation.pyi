@@ -105,43 +105,43 @@ class Operation(pyvips.VipsObject):
     
 
 
-def cache_set_max(mx): # -> None:
+def cache_set_max(mx: int) -> None:
     """Set the maximum number of operations libvips will cache."""
     ...
 
-def cache_set_max_mem(mx): # -> None:
+def cache_set_max_mem(mx: int) -> None:
     """Limit the operation cache by memory use."""
     ...
 
-def cache_set_max_files(mx): # -> None:
+def cache_set_max_files(mx: int) -> None:
     """Limit the operation cache by number of open files."""
     ...
 
-def cache_set_trace(trace): # -> None:
+def cache_set_trace(trace: bool) -> None:
     """Turn on libvips cache tracing."""
     ...
 
-def cache_get_max():
+def cache_get_max() -> int:
     """Get the maximum number of operations libvips will cache."""
     ...
 
-def cache_get_size():
+def cache_get_size() -> int:
     """Get the current size of the operations cache."""
     ...
 
-def cache_get_max_mem():
+def cache_get_max_mem() -> int:
     """Get the operation cache limit by memory use."""
     ...
 
-def cache_get_max_files():
+def cache_get_max_files() -> int:
     """Get the operation cache limit by number of open files."""
     ...
 
-def block_untrusted_set(state): # -> None:
+def block_untrusted_set(state) -> None:
     """Set the block state for all untrusted operations."""
     ...
 
-def operation_block_set(name, state): # -> None:
+def operation_block_set(name: str, state) -> None:
     """Set the block state for a named operation."""
     ...
 
