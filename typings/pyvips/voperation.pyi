@@ -53,7 +53,7 @@ class Operation(pyvips.VipsObject):
     def new_from_name(operation_name: str) -> Operation:
         ...
     
-    def set(self, name: str, flags: int, match_image: pyvips.Image, value) -> None:
+    def set(self, name: str, flags: int, match_image: pyvips.Image, value: pyvips.gvalue.GValueType) -> None:
         ...
     
     @staticmethod
@@ -137,11 +137,11 @@ def cache_get_max_files() -> int:
     """Get the operation cache limit by number of open files."""
     ...
 
-def block_untrusted_set(state) -> None:
+def block_untrusted_set(state: bool) -> None:
     """Set the block state for all untrusted operations."""
     ...
 
-def operation_block_set(name: str, state) -> None:
+def operation_block_set(name: str, state: bool) -> None:
     """Set the block state for a named operation."""
     ...
 
