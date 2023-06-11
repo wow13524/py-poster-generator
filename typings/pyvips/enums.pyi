@@ -163,10 +163,10 @@ Attributes:
     RAD (str): pixels encode 3 float RGB as 4 uchar (Radiance coding)
 
     """
-    ERROR = ...
-    NONE = ...
-    LABQ = ...
-    RAD = ...
+    ERROR: Literal["error"]
+    NONE: Literal["none"]
+    LABQ: Literal["labq"]
+    RAD: Literal["rad"]
 
 
 class Interpretation:
