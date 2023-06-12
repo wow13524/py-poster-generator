@@ -288,10 +288,10 @@ Attributes:
     THINSTRIP (str): demand in thin (typically 1 pixel high) strips
 
     """
-    ERROR = ...
-    SMALLTILE = ...
-    FATSTRIP = ...
-    THINSTRIP = ...
+    ERROR: Literal["error"]
+    SMALLTILE: Literal["smalltile"]
+    FATSTRIP: Literal["fatstrip"]
+    THINSTRIP: Literal["thinstrip"]
 
 
 class OperationRelational:
