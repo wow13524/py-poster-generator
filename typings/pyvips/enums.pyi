@@ -340,11 +340,11 @@ Attributes:
     RSHIFT (str): <<
 
     """
-    AND = ...
-    OR = ...
-    EOR = ...
-    LSHIFT = ...
-    RSHIFT = ...
+    AND: Literal["and"]
+    OR: Literal["or"]
+    EOR: Literal["eor"]
+    LSHIFT: Literal["lshift"]
+    RSHIFT: Literal["rshift"]
 
 
 class OperationMath2:
