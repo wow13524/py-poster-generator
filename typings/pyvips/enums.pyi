@@ -361,9 +361,9 @@ Attributes:
     ATAN2 (str): atan2( left, right )
 
     """
-    POW = ...
-    WOP = ...
-    ATAN2 = ...
+    POW: Literal["pow"]
+    WOP: Literal["wop"]
+    ATAN2: Literal["atan2"]
 
 
 class OperationComplex2:
