@@ -376,7 +376,7 @@ Attributes:
     CROSS_PHASE (str): convert to polar coordinates
 
     """
-    CROSS_PHASE = ...
+    CROSS_PHASE: Literal["cross-phase"]
 
 
 class OperationMath:
