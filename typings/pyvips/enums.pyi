@@ -470,9 +470,9 @@ Attributes:
     CONJ (str): complex conjugate
 
     """
-    POLAR = ...
-    RECT = ...
-    CONJ = ...
+    POLAR: Literal["polar"]
+    RECT: Literal["rect"]
+    CONJ: Literal["conj"]
 
 
 class OperationComplexget:
