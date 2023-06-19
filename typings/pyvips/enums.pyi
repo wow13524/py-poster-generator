@@ -451,9 +451,9 @@ Attributes:
     FLOOR (str): largest integral value not greater than
 
     """
-    RINT = ...
-    CEIL = ...
-    FLOOR = ...
+    RINT: Literal["rint"]
+    CEIL: Literal["ceil"]
+    FLOOR: Literal["floor"]
 
 
 class OperationComplex:
