@@ -487,8 +487,8 @@ Attributes:
     IMAG (str): get imaginary component
 
     """
-    REAL = ...
-    IMAG = ...
+    REAL: Literal["real"]
+    IMAG: Literal["imag"]
 
 
 class Combine:
