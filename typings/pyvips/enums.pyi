@@ -505,9 +505,9 @@ Attributes:
     MIN (str): take the minimum value
 
     """
-    MAX = ...
-    SUM = ...
-    MIN = ...
+    MAX: Literal["max"]
+    SUM: Literal["sum"]
+    MIN: Literal["min"]
 
 
 class Access:
