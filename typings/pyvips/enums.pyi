@@ -528,9 +528,9 @@ Attributes:
     SEQUENTIAL (str): top-to-bottom reading only, but with a small buffer
 
     """
-    RANDOM = ...
-    SEQUENTIAL = ...
-    SEQUENTIAL_UNBUFFERED = ...
+    RANDOM: Literal["random"]
+    SEQUENTIAL: Literal["sequential"]
+    SEQUENTIAL_UNBUFFERED: Literal["sequential-unbuffered"]
 
 
 class Extend:
