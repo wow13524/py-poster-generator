@@ -637,8 +637,8 @@ Attributes:
     VERTICAL (str): top-bottom
 
     """
-    HORIZONTAL = ...
-    VERTICAL = ...
+    HORIZONTAL: Literal["horizontal"]
+    VERTICAL: Literal["vertical"]
 
 
 class Align:
