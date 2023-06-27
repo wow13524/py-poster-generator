@@ -660,9 +660,9 @@ Attributes:
     HIGH (str): align high coordinate edge
 
     """
-    LOW = ...
-    CENTRE = ...
-    HIGH = ...
+    LOW: Literal["low"]
+    CENTRE: Literal["centre"]
+    HIGH: Literal["high"]
 
 
 class Interesting:
