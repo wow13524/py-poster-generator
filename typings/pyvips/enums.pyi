@@ -724,10 +724,10 @@ Attributes:
     D270 (str): 90 degrees anti-clockwise
 
     """
-    D0 = ...
-    D90 = ...
-    D180 = ...
-    D270 = ...
+    D0: Literal["d0"]
+    D90: Literal["d90"]
+    D180: Literal["d180"]
+    D270: Literal["d270"]
 
 
 class Angle45:
