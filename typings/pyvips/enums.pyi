@@ -782,9 +782,9 @@ Attributes:
     APPROXIMATE (str): approximate integer output
 
     """
-    INTEGER = ...
-    FLOAT = ...
-    APPROXIMATE = ...
+    INTEGER: Literal["integer"]
+    FLOAT: Literal["float"]
+    APPROXIMATE: Literal["approximate"]
 
 
 class FailOn:
