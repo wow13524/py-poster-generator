@@ -807,10 +807,10 @@ Attributes:
     WARNING (str): stop on anything, even warnings
 
     """
-    NONE = ...
-    TRUNCATED = ...
-    ERROR = ...
-    WARNING = ...
+    NONE: Literal["none"]
+    TRUNCATED: Literal["truncated"]
+    ERROR: Literal["error"]
+    WARNING: Literal["warning"]
 
 
 class ForeignPpmFormat:
