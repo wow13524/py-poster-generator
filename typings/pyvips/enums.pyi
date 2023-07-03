@@ -837,10 +837,10 @@ Attributes:
     PFM (str): portable float map
 
     """
-    PBM = ...
-    PGM = ...
-    PPM = ...
-    PFM = ...
+    PBM: Literal["pbm"]
+    PGM: Literal["pgm"]
+    PPM: Literal["ppm"]
+    PFM: Literal["pfm"]
 
 
 class ForeignSubsample:
