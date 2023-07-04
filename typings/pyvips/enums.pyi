@@ -857,9 +857,9 @@ Attributes:
     OFF (str): never perform subsampling
 
     """
-    AUTO = ...
-    ON = ...
-    OFF = ...
+    AUTO: Literal["auto"]
+    ON: Literal["on"]
+    OFF: Literal["off"]
 
 
 class ForeignDzLayout:
