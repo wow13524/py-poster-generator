@@ -880,11 +880,11 @@ Attributes:
     IIIF3 (str): use IIIF v3 directory layout
 
     """
-    DZ = ...
-    ZOOMIFY = ...
-    GOOGLE = ...
-    IIIF = ...
-    IIIF3 = ...
+    DZ: Literal["dz"]
+    ZOOMIFY: Literal["zoomify"]
+    GOOGLE: Literal["google"]
+    IIIF: Literal["iiif"]
+    IIIF3: Literal["iiif3"]
 
 
 class ForeignDzDepth:
