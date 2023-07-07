@@ -901,9 +901,9 @@ Attributes:
     ONE (str): only create a single layer
 
     """
-    ONEPIXEL = ...
-    ONETILE = ...
-    ONE = ...
+    ONEPIXEL: Literal["onepixel"]
+    ONETILE: Literal["onetile"]
+    ONE: Literal["one"]
 
 
 class ForeignDzContainer:
