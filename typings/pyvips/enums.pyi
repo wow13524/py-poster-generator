@@ -920,9 +920,9 @@ Attributes:
     SZI (str): write to a szi file
 
     """
-    FS = ...
-    ZIP = ...
-    SZI = ...
+    FS: Literal["fs"]
+    ZIP: Literal["zip"]
+    SZI: Literal["szi"]
 
 
 class RegionShrink:
