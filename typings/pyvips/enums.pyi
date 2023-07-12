@@ -1041,9 +1041,9 @@ Attributes:
     FLOAT (str): float predictor
 
     """
-    NONE = ...
-    HORIZONTAL = ...
-    FLOAT = ...
+    NONE: Literal["none"]
+    HORIZONTAL: Literal["horizontal"]
+    FLOAT: Literal["float"]
 
 
 class ForeignTiffResunit:
