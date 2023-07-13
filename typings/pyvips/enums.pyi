@@ -1058,8 +1058,8 @@ Attributes:
     INCH (str): use inches
 
     """
-    CM = ...
-    INCH = ...
+    CM: Literal["cm"]
+    INCH: Literal["inch"]
 
 
 class ForeignHeifCompression:
