@@ -1080,10 +1080,10 @@ Attributes:
     AV1 (str): aom
 
     """
-    HEVC = ...
-    AVC = ...
-    JPEG = ...
-    AV1 = ...
+    HEVC: Literal["hevc"]
+    AVC: Literal["avc"]
+    JPEG: Literal["jpeg"]
+    AV1: Literal["av1"]
 
 
 class Size:
