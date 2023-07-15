@@ -1105,10 +1105,10 @@ Attributes:
     FORCE (str): force size, that is, break aspect ratio
 
     """
-    BOTH = ...
-    UP = ...
-    DOWN = ...
-    FORCE = ...
+    BOTH: Literal["both"]
+    UP: Literal["up"]
+    DOWN: Literal["down"]
+    FORCE: Literal["force"]
 
 
 class Intent:
