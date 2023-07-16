@@ -1129,10 +1129,10 @@ Attributes:
     ABSOLUTE (str): absolute colorimetric rendering intent
 
     """
-    PERCEPTUAL = ...
-    RELATIVE = ...
-    SATURATION = ...
-    ABSOLUTE = ...
+    PERCEPTUAL: Literal["perceptual"]
+    RELATIVE: Literal["relative"]
+    SATURATION: Literal["saturation"]
+    ABSOLUTE: Literal["absolute"]
 
 
 class Kernel:
