@@ -1177,8 +1177,8 @@ Attributes:
     XYZ (str): use XYZ as the Profile Connection Space
 
     """
-    LAB = ...
-    XYZ = ...
+    LAB: Literal["lab"]
+    XYZ: Literal["xyz"]
 
 
 class OperationMorphology:
