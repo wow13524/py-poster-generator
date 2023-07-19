@@ -1195,8 +1195,8 @@ Attributes:
     DILATE (str): true if one set
 
     """
-    ERODE = ...
-    DILATE = ...
+    ERODE: Literal["erode"]
+    DILATE: Literal["dilate"]
 
 
 class CombineMode:
