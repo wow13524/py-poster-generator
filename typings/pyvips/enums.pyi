@@ -1216,8 +1216,8 @@ Attributes:
     ADD (str): add pixels
 
     """
-    SET = ...
-    ADD = ...
+    SET: Literal["set"]
+    ADD: Literal["add"]
 
 
 class Token:
