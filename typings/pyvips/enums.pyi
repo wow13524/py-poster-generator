@@ -1226,10 +1226,10 @@ class Token:
 Attributes:
 
     """
-    LEFT = ...
-    RIGHT = ...
-    STRING = ...
-    EQUALS = ...
+    LEFT: Literal["left"]
+    RIGHT: Literal["right"]
+    STRING: Literal["string"]
+    EQUALS: Literal["equals"]
 
 
 class Saveable:
