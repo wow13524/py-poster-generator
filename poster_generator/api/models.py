@@ -1,18 +1,24 @@
-from dataclasses import dataclass
-from typing import Any, ClassVar, Type
+from dataclasses import dataclass, field
+from dataclasses_json import DataClassJsonMixin
+from typing import Any, Callable, ClassVar, Dict, Generic, Type, TypeVar
+
+T = TypeVar("T")
 
 @dataclass(frozen=True,kw_only=True,slots=True)
-class Element:
-    pass
+class Element(DataClassJsonMixin):
+    type: str
+    args: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass(frozen=True,kw_only=True,slots=True)
-class Expression:
-    pass
+class Expression(DataClassJsonMixin, Generic[T]):
+    type: str
+    args: Dict[str, Any] = field(default_factory=dict)
+    evaluate: Callable[..., T]
 
 @dataclass(frozen=True,kw_only=True,slots=True)
 class Plugin:
     elements: ClassVar[set[Type[Element]]] = set()
-    expressions: ClassVar[set[Type[Expression]]] = set()
+    expressions: ClassVar[set[Type[Expression[Any]]]] = set()
 
     @classmethod
     def new_context(cls) -> Any:
