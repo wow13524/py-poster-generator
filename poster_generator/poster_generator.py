@@ -3,10 +3,14 @@ from dataclasses import asdict
 from PIL import Image
 from pydoc import locate
 from typing import Any, Dict, List, Optional, Type
+from .core_plugins import Args
 from .models import PosterTemplate
+from .plugin_context import ActiveContext, PluginContext
 
 def generate_poster(template: PosterTemplate, args: List[Any], debug: bool=False) -> Image.Image:
     parser: ArgumentParser = ArgumentParser(template.meta.name)
+    plugin_context: PluginContext = PluginContext(template.meta.required_plugins)
+    active_context: ActiveContext = plugin_context.new_active_context()
 
     #Build parser
     for arg in template.meta.cli_args:
@@ -19,6 +23,6 @@ def generate_poster(template: PosterTemplate, args: List[Any], debug: bool=False
             kwargs["type"] = t
         parser.add_argument(*name_or_flags, **kwargs)
     
-    print(template)
-    print(parser.parse_args(args))
+    active_context.update(Args, vars(parser.parse_args(args)))
+
     return Image.new("RGB", (template.meta.width, template.meta.height))
