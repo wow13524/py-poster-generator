@@ -19,5 +19,6 @@ def generate_poster(template: PosterTemplate, args: List[Any], debug: bool=False
             kwargs["type"] = t
         parser.add_argument(*name_or_flags, **kwargs)
     
+    print(template)
     print(parser.parse_args(args))
     return Image.new("RGB", (template.meta.width, template.meta.height))

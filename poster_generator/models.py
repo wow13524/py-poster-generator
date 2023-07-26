@@ -25,5 +25,5 @@ class PosterTemplateMeta(DataClassJsonMixin):
 @dataclass(frozen=True,kw_only=True,slots=True)
 class PosterTemplate(DataClassJsonMixin):
     meta: PosterTemplateMeta
-    logic: List[Expression[Any]] = field(default_factory=list)
+    logic: List[Expression] = field(default_factory=list)
     content: List[Element] = field(default_factory=list)
