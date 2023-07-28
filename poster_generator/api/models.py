@@ -1,17 +1,17 @@
-from dataclasses import dataclass
-from typing import Any, Callable, ClassVar, Type, TypeVar
+from typing import Any, Callable, ClassVar, Dict, Type, TypeVar
 
 T = TypeVar("T")
 
-@dataclass(frozen=True,kw_only=True,slots=True)
-class Element:
-    pass
-
-@dataclass(frozen=True,kw_only=True,slots=True)
-class Expression:
+class Evaluatable:
+    _fields: Dict[str, Any]
     evaluate: Callable[..., Any]
 
-@dataclass(frozen=True,kw_only=True,slots=True)
+class Element(Evaluatable):
+    pass
+
+class Expression(Evaluatable):
+    pass
+
 class Plugin:
     elements: ClassVar[set[Type[Element]]] = set()
     expressions: ClassVar[set[Type[Expression]]] = set()

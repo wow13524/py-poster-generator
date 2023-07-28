@@ -1,9 +1,17 @@
 from importlib import import_module
-from inspect import getmembers, isclass
-from typing import Any, Dict, List, Type
+from inspect import get_annotations, getmembers, isclass
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union
 from .api.models import Element, Expression, Plugin
+from .models import RawObject
 
 DEFAULT_PLUGINS = ["poster_generator.core_plugins"]
+IGNORE_ANNOTATIONS = [
+    "self",
+    "context",
+    "return"
+]
+
+T = TypeVar("T", bound=Union[Element, Expression])
 
 class ActiveContext:
     def __init__(
@@ -55,3 +63,20 @@ class PluginContext:
     
     def new_active_context(self) -> ActiveContext:
         return ActiveContext(self._element_plugin_map, self._expression_plugin_map, self._plugin_map)
+    
+    def _parse_raw_object(self, raw_obj: RawObject, obj_type: Type[T]) -> T:
+        obj_class: Optional[Type[Union[Element, Expression]]] = None
+        if obj_type == Element:
+            obj_class = self._element_name_map.get(raw_obj.type)
+        elif obj_type == Expression:
+            obj_class = self._expression_name_map.get(raw_obj.type)
+        if obj_class is None:
+            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_obj.type}': does not exist")
+
+        annotations = get_annotations(obj_class.evaluate)
+        for field in IGNORE_ANNOTATIONS:
+            if field in annotations:
+                del annotations[field]
+        fields = {
+
+        }
