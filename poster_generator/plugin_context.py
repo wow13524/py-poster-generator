@@ -82,7 +82,7 @@ class PluginContext:
             return False
         if type(value.get("args")) != dict:
             return False
-        if any(type(k) == str for k in cast(Dict[Any, Any], value["args"])):
+        if not any(type(k) == str for k in cast(Dict[Any, Any], value["args"])):
             return False
         return True
 
@@ -97,7 +97,7 @@ class PluginContext:
             if field in annotations:
                 del annotations[field]
         fields = {
-            field: self._parse_raw_object(value, obj_type) if self._is_raw_object(value) else value
+            field: self._parse_raw_object(RawObject(**value), obj_type) if self._is_raw_object(value) else value
             for field,value in raw_obj.args.items()
         }
         missing_keys = [key for key in annotations.keys() if key not in fields]
