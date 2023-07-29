@@ -1,10 +1,9 @@
 from abc import ABC
 from PIL.Image import Image
-from typing import Any, Callable, Dict, Generic, ParamSpec, Type, TypeVar
+from typing import Any, Callable, Dict, Generic, Type, TypeVar
 
 T = TypeVar("T")
 U = TypeVar("U")
-V = ParamSpec("V")
 
 class Expression(ABC, Generic[T, U]):
     _fields: Dict[str, Any]
