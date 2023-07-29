@@ -1,4 +1,4 @@
-import sys
+import dacite, json, sys
 from argparse import ArgumentParser, Namespace, REMAINDER
 from poster_generator.models import PosterTemplate
 from poster_generator.poster_generator import generate_poster
@@ -27,5 +27,5 @@ def _parse_args(args: List[str]) -> Namespace:
 if __name__ == "__main__":
     args: Namespace = _parse_args(sys.argv[1:])
     with open(args.template) as f:
-        template: PosterTemplate = PosterTemplate.schema().loads(f.read())
+        template: PosterTemplate = dacite.from_dict(PosterTemplate, json.load(f))
         generate_poster(template, args.template_args).save(f"{'DEBUG-' * args.debug}TEST.png")

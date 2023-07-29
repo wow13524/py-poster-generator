@@ -1,14 +1,13 @@
 from dataclasses import dataclass, field
-from dataclasses_json import DataClassJsonMixin
 from typing import Any, Dict, List, Optional, Union
 
 @dataclass(frozen=True,kw_only=True,slots=True)
-class RawObject(DataClassJsonMixin):
+class RawObject:
     type: str
     args: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass(frozen=True,kw_only=True,slots=True)
-class PosterTemplateMetaArg(DataClassJsonMixin):
+class PosterTemplateMetaArg:
     name_or_flags: Union[str, List[str]]
     nargs: Optional[Union[int, str]] = None
     default: Optional[Any] = None
@@ -19,7 +18,7 @@ class PosterTemplateMetaArg(DataClassJsonMixin):
     dest: Optional[str] = None
 
 @dataclass(frozen=True,kw_only=True,slots=True)
-class PosterTemplateMeta(DataClassJsonMixin):
+class PosterTemplateMeta:
     name: str
     cli_args: List[PosterTemplateMetaArg] = field(default_factory=list)
     required_plugins: List[str] = field(default_factory=list)
@@ -27,7 +26,7 @@ class PosterTemplateMeta(DataClassJsonMixin):
     height: int
 
 @dataclass(frozen=True,kw_only=True,slots=True)
-class PosterTemplate(DataClassJsonMixin):
+class PosterTemplate:
     meta: PosterTemplateMeta
     logic: List[RawObject] = field(default_factory=list)
     content: List[RawObject] = field(default_factory=list)
