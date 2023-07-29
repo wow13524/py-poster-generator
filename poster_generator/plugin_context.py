@@ -1,5 +1,5 @@
 from importlib import import_module
-from inspect import get_annotations, getmembers, isclass
+from inspect import get_annotations, getmembers, isclass, Parameter, signature
 from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast
 from .api.models import Element, Expression, Plugin
 from .models import RawObject
@@ -96,9 +96,13 @@ class PluginContext:
         for field in IGNORE_ANNOTATIONS:
             if field in annotations:
                 del annotations[field]
-        fields = {
+        args_fields = {
             field: self._parse_raw_object(RawObject(**value), obj_type) if self._is_raw_object(value) else value
             for field,value in raw_obj.args.items()
+        }
+        fields = {
+            **{field: value.default for field,value in signature(obj_class.evaluate).parameters.items() if value.default is not Parameter.empty},
+            **args_fields
         }
         missing_keys = [key for key in annotations.keys() if key not in fields]
         if any(missing_keys):
