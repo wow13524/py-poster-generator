@@ -27,6 +27,6 @@ def generate_poster(template: PosterTemplate, args: List[Any], debug: bool=False
         parser.add_argument(*name_or_flags, **kwargs)
     
     active_context.update(Args, vars(parser.parse_args(args)))
-    list(map(active_context.evaluate, logic + content))
+    print(list(map(active_context.evaluate, logic + content)))
 
     return Image.new("RGB", (template.meta.width, template.meta.height))
