@@ -1,5 +1,3 @@
 dacite
-dataclasses-json
-dataclass-wizard
 pillow; platform_machine != "x86_64"
 pillow-simd; platform_machine == "x86_64"
