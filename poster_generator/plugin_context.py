@@ -12,7 +12,6 @@ IGNORE_ANNOTATIONS = [
 ]
 
 T = TypeVar("T")
-#U = TypeVar("U")
 V = TypeVar("V", bound=Union[Element[Any], Expression[Any, Any]])
 
 class ActiveContext:
@@ -101,6 +100,9 @@ class PluginContext:
             field: self._parse_raw_object(value, obj_type) if self._is_raw_object(value) else value
             for field,value in raw_obj.args.items()
         }
+        missing_keys = [key for key in annotations.keys() if key not in fields]
+        if any(missing_keys):
+            raise Exception(f"Cannot parse {obj_class.__name__} with missing keys {missing_keys}")
 
         obj = obj_class()
         setattr(obj, "_fields", fields)
