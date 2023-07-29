@@ -42,7 +42,7 @@ class ActiveContext:
             field: self.evaluate(cast(Expression[Any, Any], value)) if isinstance(value, Expression) else value
             for field,value in raw_fields.items()
         }
-        return obj.evaluate(self._get_context(obj.__class__), **evaluated_fields)
+        return obj.evaluate(context=self._get_context(obj.__class__), **evaluated_fields)
 
 class PluginContext:
     def __init__(self, required_plugins: List[str]) -> None:
