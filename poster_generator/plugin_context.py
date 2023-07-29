@@ -11,14 +11,16 @@ IGNORE_ANNOTATIONS = [
     "return"
 ]
 
-T = TypeVar("T", bound=Union[Element, Expression])
+T = TypeVar("T")
+#U = TypeVar("U")
+V = TypeVar("V", bound=Union[Element[Any], Expression[Any, Any]])
 
 class ActiveContext:
     def __init__(
         self,
-        element_plugin_map: Dict[Type[Element], Type[Plugin]],
-        expression_plugin_map: Dict[Type[Expression], Type[Plugin]],
-        plugin_map: Dict[Type[Plugin], Plugin]
+        element_plugin_map: Dict[Type[Element[Any]], Type[Plugin[Any]]],
+        expression_plugin_map: Dict[Type[Expression[Any, Any]], Type[Plugin[Any]]],
+        plugin_map: Dict[Type[Plugin[Any]], Plugin[Any]]
     ) -> None:
         self._element_plugin_map = element_plugin_map
         self._expression_plugin_map = expression_plugin_map
@@ -27,21 +29,21 @@ class ActiveContext:
             for plugin_class, plugin in plugin_map.items()
         }
     
-    def update(self, plugin_class: Type[Plugin], context: Any) -> None:
+    def update(self, plugin_class: Type[Plugin[T]], context: T) -> None:
         if plugin_class not in self._context:
             raise Exception(f"Could not update {__class__.__name__}: {plugin_class.__name__} is not included in this context")
         self._context[plugin_class] = context
     
-    def evaluate(self, obj: Union[Element, Expression]) -> Any:
-        pass
+    def evaluate(self, obj: Expression[T, Any]) -> T:
+        raise NotImplemented
 
 class PluginContext:
     def __init__(self, required_plugins: List[str]) -> None:
-        self._element_name_map: Dict[str, Type[Element]] = {}
-        self._element_plugin_map: Dict[Type[Element], Type[Plugin]] = {}
-        self._expression_name_map: Dict[str, Type[Expression]] = {}
-        self._expression_plugin_map: Dict[Type[Expression], Type[Plugin]] = {}
-        self._plugin_map: Dict[Type[Plugin], Plugin] = {}
+        self._element_name_map: Dict[str, Type[Element[Any]]] = {}
+        self._element_plugin_map: Dict[Type[Element[Any]], Type[Plugin[Any]]] = {}
+        self._expression_name_map: Dict[str, Type[Expression[Any, Any]]] = {}
+        self._expression_plugin_map: Dict[Type[Expression[Any, Any]], Type[Plugin[Any]]] = {}
+        self._plugin_map: Dict[Type[Plugin[Any]], Plugin[Any]] = {}
 
         for module_name in required_plugins + DEFAULT_PLUGINS:
             try:
@@ -51,6 +53,7 @@ class PluginContext:
             
             for plugin_name, plugin_class in getmembers(module, isclass):
                 if issubclass(plugin_class, Plugin):
+                    plugin_class = cast(Type[Plugin[Any]], plugin_class)
                     try:
                         self._plugin_map[plugin_class] = plugin_class()
                     except Exception as e:
@@ -79,12 +82,12 @@ class PluginContext:
             return False
         return True
 
-    def _parse_raw_object(self, raw_obj: RawObject, obj_type: Type[T]) -> T:
-        obj_class: Optional[Type[T]] = None
+    def _parse_raw_object(self, raw_obj: RawObject, obj_type: Type[V]) -> V:
+        obj_class: Optional[Type[V]] = None
         if obj_type == Element:
-            obj_class = cast(Type[T], self._element_name_map.get(raw_obj.type))
+            obj_class = cast(Type[V], self._element_name_map.get(raw_obj.type))
         elif obj_type == Expression:
-            obj_class = cast(Type[T], self._expression_name_map.get(raw_obj.type))
+            obj_class = cast(Type[V], self._expression_name_map.get(raw_obj.type))
         if obj_class is None:
             raise Exception(f"Failed to parse {obj_type.__name__} '{raw_obj.type}': does not exist")
 
@@ -100,8 +103,8 @@ class PluginContext:
         setattr(obj, "_fields", fields)
         return obj
     
-    def parse_element(self, raw_obj: RawObject) -> Element:
+    def parse_element(self, raw_obj: RawObject) -> Element[Any]:
         return self._parse_raw_object(raw_obj, Element)
     
-    def parse_expression(self, raw_obj: RawObject) -> Expression:
+    def parse_expression(self, raw_obj: RawObject) -> Expression[Any, Any]:
         return self._parse_raw_object(raw_obj, Expression)

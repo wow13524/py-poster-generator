@@ -3,11 +3,11 @@ from typing import Any, Dict
 
 ArgsContext = Dict[str, Any]
 
-class Get(Expression):
+class Get(Expression[Any, ArgsContext]):
     def evaluate(self, context: ArgsContext, key: str) -> Any:
         return context.get(key)
 
 @expression(Get)
-class Args(Plugin):
-    def new_context(self) -> Any:
+class Args(Plugin[ArgsContext]):
+    def new_context(self) -> ArgsContext:
         return {}

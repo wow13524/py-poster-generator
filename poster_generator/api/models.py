@@ -1,20 +1,21 @@
-from typing import Any, Callable, ClassVar, Dict, Type, TypeVar
+from abc import ABC
+from PIL.Image import Image
+from typing import Any, Callable, Dict, Generic, ParamSpec, Type, TypeVar
 
 T = TypeVar("T")
+U = TypeVar("U")
+V = ParamSpec("V")
 
-class Evaluatable:
+class Expression(ABC, Generic[T, U]):
     _fields: Dict[str, Any]
-    evaluate: Callable[..., Any]
+    evaluate: Callable[..., T]
 
-class Element(Evaluatable):
+class Element(Expression[Image, T]):
     pass
 
-class Expression(Evaluatable):
-    pass
-
-class Plugin:
-    elements: ClassVar[set[Type[Element]]] = set()
-    expressions: ClassVar[set[Type[Expression]]] = set()
-
-    def new_context(self) -> Any:
-        return None
+class Plugin(ABC, Generic[T]):
+    elements: set[Type[Element[T]]] = set()
+    expressions: set[Type[Expression[Any, T]]] = set()
+   
+    def new_context(self) -> T:
+        raise NotImplemented

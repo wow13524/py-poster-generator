@@ -1,8 +1,10 @@
 from .models import Element, Expression, Plugin
-from typing import Callable, Type
+from typing import Any, Callable, Type, TypeVar
 
-def element(*element_classes: Type[Element]) -> Callable[[Type[Plugin]], Type[Plugin]]:
-    def decorator(plugin_class: Type[Plugin]) -> Type[Plugin]:
+T = TypeVar("T")
+
+def element(*element_classes: Type[Element[T]]) -> Callable[[Type[Plugin[T]]], Type[Plugin[T]]]:
+    def decorator(plugin_class: Type[Plugin[T]]) -> Type[Plugin[T]]:
         if not plugin_class.elements:
             plugin_class.elements = set(element_classes)
         else:
@@ -10,8 +12,8 @@ def element(*element_classes: Type[Element]) -> Callable[[Type[Plugin]], Type[Pl
         return plugin_class
     return decorator
 
-def expression(*expression_classes: Type[Expression]) -> Callable[[Type[Plugin]], Type[Plugin]]:
-    def decorator(plugin_class: Type[Plugin]) -> Type[Plugin]:
+def expression(*expression_classes: Type[Expression[Any, T]]) -> Callable[[Type[Plugin[T]]], Type[Plugin[T]]]:
+    def decorator(plugin_class: Type[Plugin[T]]) -> Type[Plugin[T]]:
         if not plugin_class.expressions:
             plugin_class.expressions = set(expression_classes)
         else:
