@@ -15,12 +15,7 @@ T = TypeVar("T")
 V = TypeVar("V", bound=Union[Element[Any], Expression[Any, Any]])
 
 class ActiveContext:
-    def __init__(
-        self,
-        expression_plugin_map: Dict[Type[Expression[Any, Any]], Type[Plugin[Any]]],
-        plugin_map: Dict[Type[Plugin[Any]], Plugin[Any]]
-    ) -> None:
-        self._expression_plugin_map = expression_plugin_map
+    def __init__(self, plugin_map: Dict[Type[Plugin[Any]], Plugin[Any]]) -> None:
         self._context = {
             plugin_class: plugin.new_context()
             for plugin_class, plugin in plugin_map.items()
@@ -32,9 +27,10 @@ class ActiveContext:
         self._context[plugin_class] = context
     
     def _get_context(self, expression_class: Type[Expression[Any, T]]) -> T:
-        if expression_class not in self._expression_plugin_map:
-            raise Exception(f"Could not get context for {expression_class.__name__}: plugin not registered")
-        return self._context[self._expression_plugin_map[expression_class]]
+        plugin_class: Type[Plugin[Any]] = getattr(expression_class, "_plugin")
+        if plugin_class not in self._context:
+            raise Exception(f"Could not get context for {expression_class.__name__}: parent plugin '{plugin_class.__name__}' is not part of this context")
+        return self._context[plugin_class]
 
     def evaluate(self, obj: Expression[T, Any]) -> T:
         raw_fields = cast(Dict[str, Any], getattr(obj, "_fields"))
@@ -47,7 +43,6 @@ class ActiveContext:
 class PluginContext:
     def __init__(self, required_plugins: List[str]) -> None:
         self._expression_name_map: Dict[str, Type[Expression[Any, Any]]] = {}
-        self._expression_plugin_map: Dict[Type[Expression[Any, Any]], Type[Plugin[Any]]] = {}
         self._plugin_map: Dict[Type[Plugin[Any]], Plugin[Any]] = {}
 
         for module_name in required_plugins + DEFAULT_PLUGINS:
@@ -62,17 +57,18 @@ class PluginContext:
                     try:
                         self._plugin_map[plugin_class] = plugin_class()
                     except Exception as e:
-                        raise Exception(f"Failed to load plugin {plugin_name}.{plugin_name}: {e}")
+                        raise Exception(f"Failed to load plugin {module_name}.{plugin_name}: {e}")
                     
-                    for expression_class in list(plugin_class.elements) + list(plugin_class.expressions):
+                    elements: set[Type[Element[Any]]] = getattr(plugin_class, "_elements")
+                    expressions: set[Type[Expression[Any, Any]]] = getattr(plugin_class, "_expressions")
+                    for expression_class in elements.union(expressions):
                         expression_name = f"{plugin_class.__name__}.{expression_class.__name__}"
                         if expression_name in self._expression_name_map:
                             raise Exception(f"Duplicate '{expression_name}' found")
                         self._expression_name_map[expression_name] = expression_class
-                        self._expression_plugin_map[expression_class] = plugin_class
     
     def new_active_context(self) -> ActiveContext:
-        return ActiveContext(self._expression_plugin_map, self._plugin_map)
+        return ActiveContext(self._plugin_map)
     
     def _is_raw_object(self, raw_value: Any) -> bool:
         if type(raw_value) != dict:
@@ -101,7 +97,10 @@ class PluginContext:
             for field,value in raw_obj.args.items()
         }
         fields = {
-            **{field: value.default for field,value in signature(obj_class.evaluate).parameters.items() if value.default is not Parameter.empty},
+            **{
+                field: value.default for field,value in signature(obj_class.evaluate).parameters.items()
+                if value.default is not Parameter.empty
+            },
             **args_fields
         }
         missing_keys = [key for key in annotations.keys() if key not in fields]

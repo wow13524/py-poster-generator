@@ -1,14 +1,14 @@
 from poster_generator.api import expression, Expression, Plugin
-from typing import Any, Dict
+from typing import Dict
 
-VarsContext = Dict[str, Any]
+VarsContext = Dict[str, object]
 
-class Get(Expression[Any, VarsContext]):
-    def evaluate(self, context: VarsContext, name: str) -> Any:
+class Get(Expression[object, VarsContext]):
+    def evaluate(self, context: VarsContext, name: str) -> object:
         return context.get(name)
 
 class Set(Expression[None, VarsContext]):
-    def evaluate(self, context: VarsContext, name: str, value: Any) -> None:
+    def evaluate(self, context: VarsContext, name: str, value: object) -> None:
         context[name] = value
 
 @expression(Get, Set)

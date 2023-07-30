@@ -1,11 +1,13 @@
 from abc import ABC
 from PIL.Image import Image
-from typing import Any, Callable, Dict, Generic, Type, TypeVar
+from typing import Any, Callable, ClassVar, Dict, Generic, Type, TypeVar, TypeVarTuple
 
 T = TypeVar("T")
 U = TypeVar("U")
+V = TypeVarTuple("V")
 
 class Expression(ABC, Generic[T, U]):
+    _plugin: ClassVar['Plugin[Any]']
     _fields: Dict[str, Any]
     evaluate: Callable[..., T]
 
@@ -13,8 +15,8 @@ class Element(Expression[Image, T]):
     pass
 
 class Plugin(ABC, Generic[T]):
-    elements: set[Type[Element[T]]] = set()
-    expressions: set[Type[Expression[Any, T]]] = set()
+    _elements: ClassVar[set[Type[Element[Any]]]] = set()
+    _expressions: ClassVar[set[Type[Expression[Any, Any]]]] = set()
    
     def new_context(self) -> T:
         raise NotImplemented
