@@ -4,7 +4,7 @@ from typing import Dict
 ArgsContext = Dict[str, object]
 
 class Get(Expression[object, ArgsContext]):
-    def evaluate(self, context: ArgsContext, key: str=REQUIRED) -> object:
+    def evaluate(self, *, context: ArgsContext, key: str=REQUIRED) -> object:
         return context.get(key)
 
 @expression(Get)

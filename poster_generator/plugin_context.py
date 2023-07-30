@@ -87,7 +87,7 @@ class PluginContext:
         if obj_class is None:
             raise Exception(f"Failed to parse {obj_type.__name__} '{raw_obj.type}': does not exist")
         elif not issubclass(obj_class, obj_type):
-            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_obj.type}': is not an {obj_type.__name__}")
+            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_obj.type}': not an {obj_type.__name__}")
         annotations = get_annotations(obj_class.evaluate)
         for field in IGNORE_ANNOTATIONS:
             if field in annotations:

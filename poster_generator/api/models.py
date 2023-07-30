@@ -1,6 +1,6 @@
 from abc import ABC
 from PIL.Image import Image
-from typing import Any, ClassVar, Dict, Generic, Type, TypeVar
+from typing import Any, ClassVar, Dict, Generic, Tuple, Type, TypeVar
 
 T = TypeVar("T")
 U = TypeVar("U")
@@ -9,10 +9,10 @@ class Expression(ABC, Generic[T, U]):
     _plugin: ClassVar['Plugin[Any]']
     _fields: Dict[str, Any]
     
-    def evaluate(self, context: U) -> T:
+    def evaluate(self, *, context: U) -> T:
         raise NotImplemented
 
-class Element(Expression[Image, T]):
+class Element(Expression[Tuple[Image, int, int], T]):
     pass
 
 class Plugin(ABC, Generic[T]):
