@@ -12,7 +12,7 @@ class Expression(ABC, Generic[T, U]):
     def evaluate(self, *, context: U) -> T:
         raise NotImplemented
 
-class Element(Expression[Tuple[Image, int, int], T]):
+class Element(Expression[Tuple[Image, Tuple[int, int]], T]):
     pass
 
 class Plugin(ABC, Generic[T]):

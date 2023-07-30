@@ -2,7 +2,6 @@ from importlib import import_module
 from inspect import get_annotations, getmembers, isclass, Parameter, signature
 from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast
 from .api import Element, Expression, Plugin, REQUIRED
-from .models import RawObject
 
 DEFAULT_PLUGINS = ["poster_generator.core_plugins"]
 IGNORE_ANNOTATIONS = [
@@ -69,36 +68,29 @@ class PluginContext:
     
     def new_active_context(self) -> ActiveContext:
         return ActiveContext(self._plugin_map)
-    
-    def _is_raw_object(self, raw_value: Any) -> bool:
-        if type(raw_value) != dict:
-            return False
-        value = cast(Dict[str, Any], raw_value)
-        if type(value.get("type")) != str:
-            return False
-        if type(value.get("args")) != dict:
-            return False
-        if any(type(k) != str for k in cast(Dict[Any, Any], value["args"])):
-            return False
-        return True
 
-    def _parse_raw_object(self, raw_obj: RawObject, obj_type: Type[V]) -> V:
-        obj_class: Optional[Type[V]] = cast(Optional[Type[V]], self._expression_name_map.get(raw_obj.type))
+    def _parse_raw_object(self, raw_obj: Dict[str, Any], obj_type: Type[V]) -> V:
+        raw_type: Optional[str] = raw_obj.get("type")
+        if raw_type is None:
+            raise Exception(f"Raw {obj_type.__name__} is missing 'type' identifier")
+        
+        obj_class: Optional[Type[V]] = cast(Optional[Type[V]], self._expression_name_map.get(raw_type))
         if obj_class is None:
-            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_obj.type}': does not exist")
+            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_type}': does not exist")
         elif not issubclass(obj_class, obj_type):
-            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_obj.type}': not an {obj_type.__name__}")
+            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_type}': not an {obj_type.__name__}")
         annotations = get_annotations(obj_class.evaluate)
         for field in IGNORE_ANNOTATIONS:
             if field in annotations:
                 del annotations[field]
         args_fields = {
-            field: self._parse_raw_object(RawObject(**value), obj_type) if self._is_raw_object(value) else value
-            for field,value in raw_obj.args.items()
+            field: self._parse_raw_object(cast(Dict[str, Any], value), obj_type) if type(value := raw_obj.get(field)) == dict else value
+            for field in annotations
         }
         fields = {
             **{
-                field: value.default for field,value in signature(obj_class.evaluate).parameters.items()
+                field: value.default
+                for field,value in signature(obj_class.evaluate).parameters.items()
                 if value.default is not REQUIRED and value.default is not Parameter.empty
             },
             **args_fields
@@ -111,8 +103,8 @@ class PluginContext:
         setattr(obj, "_fields", fields)
         return obj
     
-    def parse_element(self, raw_obj: RawObject) -> Element[Any]:
+    def parse_element(self, raw_obj: Dict[str, Any]) -> Element[Any]:
         return cast(Element[Any], self._parse_raw_object(raw_obj, Element))
     
-    def parse_expression(self, raw_obj: RawObject) -> Expression[Any, Any]:
+    def parse_expression(self, raw_obj: Dict[str, Any]) -> Expression[Any, Any]:
         return cast(Expression[Any, Any], self._parse_raw_object(raw_obj, Expression))

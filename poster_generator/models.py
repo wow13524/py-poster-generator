@@ -2,11 +2,6 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
 @dataclass(frozen=True,kw_only=True,slots=True)
-class RawObject:
-    type: str
-    args: Dict[str, Any] = field(default_factory=dict)
-
-@dataclass(frozen=True,kw_only=True,slots=True)
 class PosterTemplateMetaArg:
     name_or_flags: Union[str, List[str]]
     nargs: Optional[Union[int, str]] = None
@@ -28,5 +23,5 @@ class PosterTemplateMeta:
 @dataclass(frozen=True,kw_only=True,slots=True)
 class PosterTemplate:
     meta: PosterTemplateMeta
-    logic: List[RawObject] = field(default_factory=list)
-    content: List[RawObject] = field(default_factory=list)
+    logic: List[Dict[str, Any]] = field(default_factory=list)
+    content: List[Dict[str, Any]] = field(default_factory=list)
