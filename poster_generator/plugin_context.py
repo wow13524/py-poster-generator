@@ -78,7 +78,7 @@ class PluginContext:
             return False
         if type(value.get("args")) != dict:
             return False
-        if not any(type(k) == str for k in cast(Dict[Any, Any], value["args"])):
+        if any(type(k) != str for k in cast(Dict[Any, Any], value["args"])):
             return False
         return True
 
