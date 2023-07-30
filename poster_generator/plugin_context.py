@@ -1,7 +1,7 @@
 from importlib import import_module
 from inspect import get_annotations, getmembers, isclass, Parameter, signature
 from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast
-from .api.models import Element, Expression, Plugin
+from .api import Element, Expression, Plugin, REQUIRED
 from .models import RawObject
 
 DEFAULT_PLUGINS = ["poster_generator.core_plugins"]
@@ -99,7 +99,7 @@ class PluginContext:
         fields = {
             **{
                 field: value.default for field,value in signature(obj_class.evaluate).parameters.items()
-                if value.default is not Parameter.empty
+                if value.default is not REQUIRED and value.default is not Parameter.empty
             },
             **args_fields
         }
@@ -112,7 +112,7 @@ class PluginContext:
         return obj
     
     def parse_element(self, raw_obj: RawObject) -> Element[Any]:
-        return self._parse_raw_object(raw_obj, Element)
+        return cast(Element[Any], self._parse_raw_object(raw_obj, Element))
     
     def parse_expression(self, raw_obj: RawObject) -> Expression[Any, Any]:
-        return self._parse_raw_object(raw_obj, Expression)
+        return cast(Expression[Any, Any], self._parse_raw_object(raw_obj, Expression))
