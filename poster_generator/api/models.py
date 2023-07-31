@@ -25,8 +25,8 @@ class Expression(ABC, Generic[T, U]):
         return set(signature(fn).parameters.values())
 
     @classmethod
-    def get_required_fields(cls, compute_fields: Optional[set[Callable[..., Any]]]=None) -> set[Parameter]:
-        compute_fields = compute_fields or cls.get_compute_fields().union({cls.evaluate})
+    def get_required_fields(cls) -> set[Parameter]:
+        compute_fields: set[Callable[..., Any]] = cls.get_compute_fields().union({cls.evaluate})
         compute_fields_names: set[str] = {fn.__name__ for fn in compute_fields}.union({"self", "context"})
         required_fields: set[Parameter] = set()
         for fn in compute_fields:
