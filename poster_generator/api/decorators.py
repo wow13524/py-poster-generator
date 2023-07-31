@@ -15,6 +15,10 @@ def expression(*expression_classes: Type[Expression[Any, T]]) -> Callable[[Type[
 def element(*element_classes: Type[Element[T]]) -> Callable[[Type[Plugin[T]]], Type[Plugin[T]]]:
     return expression(*element_classes)
 
-def field(fn: Callable[..., T]) -> Callable[..., T]:
-    setattr(fn, "_compute_field", True)
-    return fn
+def field(*, forward: bool=False) -> Callable[..., Any]:
+    def inner(fn: Callable[..., T]) -> Callable[..., T]:
+        setattr(fn, "_compute_field", True)
+        if forward:
+            setattr(fn, "_forward", True)
+        return fn
+    return inner
