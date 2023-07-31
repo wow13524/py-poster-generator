@@ -21,14 +21,19 @@ class Expression(ABC, Generic[T, U]):
         return {param for _,param in compute_fields}
 
     @classmethod
+    def get_allowed_fields(cls, fn: Callable[..., Any]) -> set[Parameter]:
+        return set(signature(fn).parameters.values())
+
+    @classmethod
     def get_required_fields(cls, compute_fields: Optional[set[Callable[..., Any]]]=None) -> set[Parameter]:
         compute_fields = compute_fields or cls.get_compute_fields().union({cls.evaluate})
         compute_fields_names: set[str] = {fn.__name__ for fn in compute_fields}.union({"self", "context"})
         required_fields: set[Parameter] = set()
         for fn in compute_fields:
-            for param in signature(fn).parameters.values():
-                if param.name not in compute_fields_names and param.default == REQUIRED:
-                    required_fields.add(param)
+            required_fields = required_fields.union(set(filter(
+                lambda x: x.name not in compute_fields_names and x.default == REQUIRED,
+                cls.get_allowed_fields(fn)
+            )))
         return required_fields
         
     def evaluate(self, *, context: U) -> T:

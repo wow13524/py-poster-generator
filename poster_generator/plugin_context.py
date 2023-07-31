@@ -1,6 +1,6 @@
 from importlib import import_module
 from inspect import getmembers, isclass, Parameter
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, cast
 from .api import Element, Expression, Plugin
 
 DEFAULT_PLUGINS = ["poster_generator.core_plugins"]
@@ -26,6 +26,15 @@ class ActiveContext:
             raise Exception(f"Could not get context for {expression_class.__name__}: parent plugin '{plugin_class.__name__}' is not part of this context")
         return self._context[plugin_class]
 
+    def _filter_fields(self, fn: Callable[..., Any], fields: Dict[str, Any]) -> Dict[str, Any]:
+        allowed_fields: set[Parameter] = Expression.get_allowed_fields(fn)
+        allowed_fields_names: set[str] = set(map(lambda x: x.name, allowed_fields))
+        return {
+            field: value
+            for field,value in fields.items()
+            if field in allowed_fields_names
+        }
+
     def _evaluate_fields(self, obj: Expression[Any, Any]) -> Dict[str, Any]:
         raw_fields = cast(Dict[str, Any], getattr(obj, "_fields"))
         return {
@@ -37,10 +46,10 @@ class ActiveContext:
         context: Any = self._get_context(obj.__class__)
         fields: Dict[str, Any] = self._evaluate_fields(obj)
         computed_fields: Dict[str, Any] = {
-            fn.__name__: fn(obj, context=context, **fields)
+            fn.__name__: fn(obj, context=context, **self._filter_fields(fn, fields))
             for fn in obj.get_compute_fields()
         }
-        return obj.evaluate(context=context, **fields, **computed_fields)
+        return obj.evaluate(context=context, **self._filter_fields(obj.evaluate, {**fields, **computed_fields}))
 
 class PluginContext:
     def __init__(self, required_plugins: List[str]) -> None:
@@ -85,10 +94,10 @@ class PluginContext:
         
         required_fields: set[Parameter] = obj_class.get_required_fields()
         parsed_required_fields = {
-            field.name: self._parse_raw_object(cast(Dict[str, Any], value), obj_type) if type(value := raw_obj.get(field.name)) == dict else value
-            for field in required_fields
+            field: self._parse_raw_object(cast(Dict[str, Any], value), obj_type) if type(value) == dict else value
+            for field,value in raw_obj.items()
         }
-        missing_keys = [key for key in required_fields if key not in required_fields]
+        missing_keys = [param.name for param in required_fields if param.name not in parsed_required_fields]
         if any(missing_keys):
             raise Exception(f"Cannot parse {obj_class.__name__} with missing keys {missing_keys}")
 
