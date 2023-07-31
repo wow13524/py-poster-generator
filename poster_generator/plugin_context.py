@@ -1,15 +1,17 @@
 from importlib import import_module
-from inspect import getmembers, isclass, Parameter
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, cast
+from inspect import Parameter, getmembers, isclass
+from typeguard import check_type
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast, get_args, get_origin
 from .api import Element, Expression, Plugin
 
 T = TypeVar("T")
-U = TypeVar("U", bound=Union[Element[Any], Expression[Any, Any]])
 
 DEFAULT_PLUGINS = ["poster_generator.core_plugins"]
 
-param_str: Callable[[Parameter], str] = lambda param: param.name
-callable_str: Callable[[Callable[..., Any]], str] = lambda callable: callable.__name__
+name_str: Callable[[Parameter], str] = lambda param: param.name
+uname_str: Callable[[Callable[..., Any]], str] = lambda callable: callable.__name__
+
+noop: Callable[..., None] = lambda *_: None
 
 class ActiveContext:
     def __init__(self, plugin_map: Dict[Type[Plugin[Any]], Plugin[Any]]) -> None:
@@ -20,23 +22,35 @@ class ActiveContext:
     
     def _evaluate_fields(self, obj: Expression[Any, Any], evaluated: Dict[str, Any], filter_params: Optional[set[Parameter]]=None) -> None:
         raw_fields: Dict[str, Any] = getattr(obj, "_fields")
-        filter_param_names: set[str] = set(map(param_str, filter_params or {}))
+        filter_param_names: set[str] = set(map(name_str, filter_params or {}))
         forward_fields: set[Callable[..., Any]] = obj.get_forward_fields()
-        forward_field_names: set[str] = set(map(callable_str, forward_fields))
+        forward_field_names: set[str] = set(map(uname_str, forward_fields))
         evaluated_forward_fields: Dict[str, Any] = {
             field: value
             for field,value in evaluated.items()
             if field in forward_field_names
         }
-        evaluated.update({
-            field: self.evaluate(cast(Expression[Any, Any], value), evaluated_forward_fields) if isinstance(value, Expression) else value
-            for field,value in raw_fields.items() 
-            if (filter_params is None or field in filter_param_names) and field not in evaluated
-        })
+        evaluated_fields: Dict[str, Any] = {}
+        for field,value in raw_fields.items():
+            if (filter_params is None or field in filter_param_names) and field not in evaluated:
+                if type(value) == list:
+                    value = [
+                        self.evaluate(cast(Expression[Any, Any], v), evaluated) if isinstance(v, Expression) else v 
+                        for v in cast(List[Any], value)
+                    ]
+                elif type(value) == dict:
+                    value = {
+                        k: self.evaluate(cast(Expression[Any, Any], v), evaluated) if isinstance(v, Expression) else v 
+                        for k,v in cast(Dict[str, Any], value).items()
+                    }
+                elif isinstance(value, Expression):
+                    value = self.evaluate(cast(Expression[Any, Any], value), evaluated_forward_fields)
+                evaluated_fields[field] = value
+        evaluated.update(evaluated_fields)
 
     def _filter_fields(self, fn: Callable[..., Any], fields: Dict[str, Any]) -> Dict[str, Any]:
         allowed_fields: set[Parameter] = Expression.get_allowed_fields(fn)
-        allowed_fields_names: set[str] = set(map(param_str, allowed_fields))
+        allowed_fields_names: set[str] = set(map(name_str, allowed_fields))
         return {
             field: value
             for field,value in fields.items()
@@ -95,35 +109,61 @@ class PluginContext:
                         
                         self._expression_name_map[expression_name] = expression_class
     
-    def _parse_raw_object(self, raw_obj: Dict[str, Any], obj_type: Type[U]) -> U:
-        raw_type: Optional[str] = raw_obj.get("type")
-        if raw_type is None:
-            raise Exception(f"Raw {obj_type.__name__} is missing 'type' identifier")
-        
-        obj_class: Optional[Type[U]] = cast(Optional[Type[U]], self._expression_name_map.get(raw_type))
-        if obj_class is None:
-            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_type}': plugin not imported")
-        elif not issubclass(obj_class, obj_type):
-            raise Exception(f"Failed to parse {obj_type.__name__} '{raw_type}': not an {obj_type.__name__}")
-        
-        required_fields: set[Parameter] = obj_class.get_required_fields()
-        parsed_required_fields = {
-            field: self._parse_raw_object(cast(Dict[str, Any], value), obj_type) if type(value) == dict else value
-            for field,value in raw_obj.items()
-        }
-        missing_keys = [param.name for param in required_fields if param.name not in parsed_required_fields]
-        if any(missing_keys):
-            raise Exception(f"Cannot parse {obj_class.__name__} with missing keys {missing_keys}")
-
-        obj = obj_class()
-        setattr(obj, "_fields", parsed_required_fields)
-        return obj
+    def _parse_raw_object(self, raw_obj: Any, obj_type: Type[T]) -> T:
+        obj: Any
+        type_origin: Optional[type] = get_origin(obj_type)
+        type_args: Tuple[type, ...] = get_args(obj_type)
+        type_error: str = f"""Expected type {uname_str(obj_type)}{f"[{', '.join(map(uname_str, type_args))}]" if type_args else ""}, got {uname_str(type(raw_obj))}"""
+        if type(raw_obj) == list:
+            assert check_type(cast(Any, raw_obj), list, typecheck_fail_callback=None), type_error
+            obj = [self._parse_raw_object(v, Union[cast(Any, type_args)[0], Expression[Any, Any]]) for v in cast(List[Any], raw_obj)]
+        elif type(raw_obj) == dict:
+            raw_dict = cast(Dict[str, Any], raw_obj)
+            if "@type" in raw_dict:
+                raw_type: str = raw_dict["@type"]
+                obj_class: Optional[Type[Expression[Any, Any]]] = self._expression_name_map.get(raw_type)
+                assert obj_class is not None, f"Plugin containing '{obj_class}' not imported"
+                required_fields: set[Parameter] = obj_class.get_required_fields()
+                parsed_required_fields: Dict[str, Any] = {}
+                for param in obj_class.get_allowed_fields():
+                    try:
+                        parsed_required_fields[param.name] = self._parse_raw_object(raw_dict.get(param.name), Union[param.annotation, Expression[Any, Any]])
+                    except Exception as e:
+                        raise Exception(f"Failed to parse field '{param.name}': {e}")
+                missing_keys: List[str] = [param.name for param in required_fields if param.name not in parsed_required_fields]
+                assert not any(missing_keys), f"Missing keys {missing_keys}"
+                obj = obj_class()
+                setattr(obj, "_fields", parsed_required_fields)
+            else:
+                assert type_origin == dict, type_error
+                obj = {
+                    key: self._parse_raw_object(value, Union[cast(Any, type_args)[1], Expression[Any, Any]])
+                    for key,value in raw_dict.items()
+                }
+        else:
+            obj = raw_obj
+        try:
+            return check_type(obj, obj_type)
+        except Exception as e:
+            raise Exception(type_error+"\n"+str(e))
     
     def new_active_context(self) -> ActiveContext:
         return ActiveContext(self._plugin_map)
     
-    def parse_element(self, raw_obj: Dict[str, Any]) -> Element[Any]:
-        return cast(Element[Any], self._parse_raw_object(raw_obj, Element))
+    def parse_content(self, content: List[Dict[str, Any]]) -> List[Element[Any]]:
+        parsed: List[Element[Any]] = []
+        for i, raw_obj in enumerate(content):
+            try:
+                parsed.append(self._parse_raw_object(raw_obj, Element[Any]))
+            except Exception as e:
+                raise Exception(f"Failed to parse content[{i}]: {e}")
+        return parsed
     
-    def parse_expression(self, raw_obj: Dict[str, Any]) -> Expression[Any, Any]:
-        return cast(Expression[Any, Any], self._parse_raw_object(raw_obj, Expression))
+    def parse_logic(self, logic: List[Dict[str, Any]]) -> List[Expression[Any, Any]]:
+        parsed: List[Expression[Any, Any]] = []
+        for i, raw_obj in enumerate(logic):
+            try:
+                parsed.append(self._parse_raw_object(raw_obj, Expression[Any, Any]))
+            except Exception as e:
+                raise Exception(f"Failed to parse logic[{i}]: {e}")
+        return parsed
