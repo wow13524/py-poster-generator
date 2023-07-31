@@ -1,7 +1,7 @@
 from abc import ABC
 from PIL.Image import Image
 from inspect import Parameter, getmembers, isfunction, signature
-from typing import Any, Callable, ClassVar, Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import Any, Callable, ClassVar, Dict, Generic, List, Tuple, Type, TypeVar
 from .constants import REQUIRED
 
 T = TypeVar("T")
@@ -12,17 +12,16 @@ def is_compute_field(obj: Any) -> bool:
 
 class Expression(ABC, Generic[T, U]):
     _plugin: ClassVar['Plugin[Any]']
-    _compute_fields: Dict[str, 'Expression[Any, Any]']
     _fields: Dict[str, Any]
     
+    @classmethod
+    def get_allowed_fields(cls, fn: Callable[..., Any]) -> set[Parameter]:
+        return set(signature(fn).parameters.values())
+
     @classmethod
     def get_compute_fields(cls) -> set[Callable[..., Any]]:
         compute_fields: List[Tuple[str, Callable[..., Any]]] = getmembers(cls, is_compute_field)
         return {param for _,param in compute_fields}
-
-    @classmethod
-    def get_allowed_fields(cls, fn: Callable[..., Any]) -> set[Parameter]:
-        return set(signature(fn).parameters.values())
 
     @classmethod
     def get_required_fields(cls) -> set[Parameter]:
