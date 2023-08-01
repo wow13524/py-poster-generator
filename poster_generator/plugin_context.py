@@ -11,8 +11,6 @@ DEFAULT_PLUGINS = ["poster_generator.core_plugins"]
 name_str: Callable[[Parameter], str] = lambda param: param.name
 uname_str: Callable[[Callable[..., Any]], str] = lambda callable: callable.__name__
 
-noop: Callable[..., None] = lambda *_: None
-
 class ActiveContext:
     def __init__(self, plugin_map: Dict[Type[Plugin[Any]], Plugin[Any]]) -> None:
         self._context = {
@@ -22,7 +20,7 @@ class ActiveContext:
     
     def _evaluate_fields(self, obj: Expression[Any, Any], evaluated: Dict[str, Any], filter_params: Optional[set[Parameter]]=None) -> None:
         raw_fields: Dict[str, Any] = getattr(obj, "_fields")
-        filter_param_names: set[str] = set(map(name_str, filter_params or {}))
+        filter_param_names: set[str] = set(map(name_str, filter_params or obj.get_allowed_fields()))
         forward_fields: set[Callable[..., Any]] = obj.get_forward_fields()
         forward_field_names: set[str] = set(map(uname_str, forward_fields))
         evaluated_forward_fields: Dict[str, Any] = {
@@ -32,7 +30,7 @@ class ActiveContext:
         }
         evaluated_fields: Dict[str, Any] = {}
         for field,value in raw_fields.items():
-            if (filter_params is None or field in filter_param_names) and field not in evaluated:
+            if field in filter_param_names and field not in evaluated:
                 if type(value) == list:
                     value = [
                         self.evaluate(cast(Expression[Any, Any], v), evaluated) if isinstance(v, Expression) else v 
