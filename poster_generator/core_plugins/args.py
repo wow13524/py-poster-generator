@@ -1,4 +1,4 @@
-from poster_generator.api import expression, Expression, Plugin, REQUIRED
+from poster_generator.api import Expression, Plugin, REQUIRED, expression
 from typing import Dict
 
 ArgsContext = Dict[str, object]

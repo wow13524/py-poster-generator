@@ -2,9 +2,10 @@ from argparse import ArgumentParser
 from dataclasses import asdict
 from PIL import Image
 from pydoc import locate
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Tuple, Type
 from .api.models import Element, Expression
 from .core_plugins import Args
+from .core_plugins.ui import Canvas
 from .models import PosterTemplate
 from .plugin_context import ActiveContext, PluginContext
 
@@ -27,6 +28,10 @@ def generate_poster(template: PosterTemplate, args: List[Any], debug: bool=False
         parser.add_argument(*name_or_flags, **kwargs)
     
     active_context.update(Args, vars(parser.parse_args(args)))
-    print(list(map(active_context.evaluate, logic + content)))
+    print(list(map(active_context.evaluate, logic)))
 
-    return Image.new("RGB", (template.meta.width, template.meta.height))
+    canvas: Element[Any] = Canvas(template.meta.width, template.meta.height, content)
+
+    render: Tuple[Image.Image, Tuple[int, int]] = active_context.evaluate(canvas)
+
+    return render[0]

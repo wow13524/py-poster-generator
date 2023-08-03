@@ -1,4 +1,4 @@
-from poster_generator.api import expression, Expression, Plugin, REQUIRED
+from poster_generator.api import Expression, Plugin, REQUIRED, expression
 from typing import Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 
 T = TypeVar("T")
