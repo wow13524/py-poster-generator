@@ -44,7 +44,7 @@ class PluginContext:
         type_args: Tuple[type, ...] = get_args(obj_type)
         type_error: str = f"""Expected type {uname_str(obj_type)}{f"[{', '.join(map(uname_str, type_args))}]" if type_args else ""}, got {uname_str(type(raw_obj))}"""
         if type(raw_obj) == list:
-            assert check_type(cast(Any, raw_obj), list, typecheck_fail_callback=None), type_error
+            assert type(cast(Any, raw_obj)) == list, type_error
             obj = [self._parse_raw_object(v, Union[cast(Any, type_args)[0], Expression[Any, Any]]) for v in cast(List[Any], raw_obj)]
         elif type(raw_obj) == dict:
             raw_dict = cast(Dict[str, Any], raw_obj)
@@ -56,7 +56,10 @@ class PluginContext:
                 parsed_required_fields: Dict[str, Any] = {}
                 for param in obj_class.get_allowed_fields():
                     try:
-                        parsed_required_fields[param.name] = self._parse_raw_object(raw_dict.get(param.name), Union[param.annotation, Expression[Any, Any]])
+                        t: type = Union[param.annotation, Expression[Any, Any]]
+                        if param not in required_fields:
+                            t = Optional[t]
+                        parsed_required_fields[param.name] = self._parse_raw_object(raw_dict.get(param.name), t)
                     except Exception as e:
                         raise Exception(f"Failed to parse field '{param.name}': {e}")
                 missing_keys: List[str] = [param.name for param in required_fields if param.name not in parsed_required_fields]

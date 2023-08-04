@@ -9,7 +9,7 @@ T = TypeVar("T")
 
 class ChildrenComponent:
     @field(forward=True)
-    def size(self, *, context: Any, children: List[Tuple[Image.Image, Tuple[int, int]]]=[]) -> List[Tuple[Image.Image, Tuple[int, int]]]:
+    def children(self, *, context: Any, children: List[Tuple[Image.Image, Tuple[int, int]]]=REQUIRED) -> List[Tuple[Image.Image, Tuple[int, int]]]:
         return children
     
     @staticmethod
@@ -19,14 +19,15 @@ class ChildrenComponent:
 
 class SizeComponent:
     @field(forward=True)
-    def size(self, *, context: Any, size: Tuple[int, int], width: float=REQUIRED, height: float=REQUIRED) -> Tuple[int, int]:
+    def size(self, *, context: Any, size: Tuple[int, int]=REQUIRED, width: float=REQUIRED, height: float=REQUIRED) -> Tuple[int, int]:
         return (int(size[0] * width), int(size[1] * height))
 
 class Canvas(Element[UiContext], ChildrenComponent, SizeComponent):
     _width: int
     _height: int
 
-    def __init__(self, width: int, height: int, children: List[Element[Any]]) -> None:
+    def __init__(self, width: int=-1, height: int=-1, children: List[Element[Any]]=[]) -> None:
+        assert width >= 0, "Cannot include a Canvas in a template"
         self._fields = {"children": children}
         self._width = width
         self._height = height
