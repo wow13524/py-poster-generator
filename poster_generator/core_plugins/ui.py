@@ -8,10 +8,6 @@ UiContext = NoneType
 T = TypeVar("T")
 
 class ChildrenComponent:
-    @field(forward=True)
-    def children(self, *, context: Any, children: List[Tuple[Image.Image, Tuple[int, int]]]=REQUIRED) -> List[Tuple[Image.Image, Tuple[int, int]]]:
-        return children
-    
     @staticmethod
     def apply_children(base: Image.Image, children: List[Tuple[Image.Image, Tuple[int, int]]]) -> None:
         for child,box in children:
@@ -23,25 +19,26 @@ class SizeComponent:
         return (int(size[0] * width), int(size[1] * height))
 
 class Canvas(Element[UiContext], ChildrenComponent, SizeComponent):
-    _width: int
-    _height: int
-
     def __init__(self, width: int=-1, height: int=-1, children: List[Element[Any]]=[]) -> None:
         assert width >= 0, "Cannot include a Canvas in a template"
-        self._fields = {"children": children}
-        self._width = width
-        self._height = height
-    
-    @field(forward=True)
-    def size(self, *, context: UiContext) -> Tuple[int, int]:
-        return (self._width, self._height)
+        self._fields = {
+            "size": (width, height),
+            "width": 1,
+            "height": 1,
+            "children": children
+        }
 
     def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED, children: List[Tuple[Image.Image, Tuple[int, int]]]=REQUIRED) -> Tuple[Image.Image, Tuple[int, int]]:
         base: Image.Image = Image.new(mode="RGB", size=size)
         self.apply_children(base, children)
         return (base, (0, 0))
 
-@element(Canvas)
+class Box(Element[UiContext], ChildrenComponent, SizeComponent):
+    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED, children: List[Tuple[Image.Image, Tuple[int, int]]]=REQUIRED) -> Tuple[Image.Image, Tuple[int, int]]:
+        base: Image.Image = Image.new(mode="RGB", size=size, color=(0, 255, 0))
+        return (base, (0, 0))
+
+@element(Box, Canvas)
 class Ui(Plugin[UiContext]):
     def new_context(self) -> UiContext:
         return None

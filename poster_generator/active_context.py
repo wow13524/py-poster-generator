@@ -61,13 +61,12 @@ class ActiveContext:
         context: Any = self._get_context(obj.__class__)
         compute_fields: set[Callable[..., Any]] = obj.get_compute_fields()
         evaluated_fields: Dict[str, Any] = forwarded_fields.copy() if forwarded_fields else {}
-
-        self._evaluate_fields(obj, evaluated_fields, obj.get_allowed_fields(compute_fields))
+        forwarded_fields_evaluation: Dict[str, Any] = evaluated_fields.copy()
+        self._evaluate_fields(obj, forwarded_fields_evaluation, obj.get_allowed_fields(compute_fields))
         evaluated_fields.update({
-            fn.__name__: fn(obj, context=context, **self._filter_fields(fn, evaluated_fields))
+            fn.__name__: fn(obj, context=context, **self._filter_fields(fn, forwarded_fields_evaluation))
             for fn in compute_fields
         })
-
         self._evaluate_fields(obj, evaluated_fields)
         return obj.evaluate(context=context, **self._filter_fields(obj.evaluate, evaluated_fields))
 
