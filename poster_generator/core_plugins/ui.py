@@ -11,7 +11,7 @@ class ChildrenComponent:
     def apply_children(self, *, context: Any, evaluated: Image.Image, children: Optional[List[Image.Image]]=None) -> None:
         if children:
             for child in children:
-                evaluated.paste(im=child, box=child.info.get("position"))
+                evaluated.alpha_composite(im=child, dest=child.info.get("position", (0, 0)))
 
 class PositionComponent:
     @post_effect
