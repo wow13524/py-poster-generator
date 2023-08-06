@@ -8,14 +8,25 @@ T = TypeVar("T")
 
 class ChildrenComponent:
     @post_effect
-    def apply_children(self, *, context: Any, evaluated: Tuple[Image.Image, Tuple[int, int]], children: Optional[List[Tuple[Image.Image, Tuple[int, int]]]]=None) -> None:
+    def apply_children(self, *, context: Any, evaluated: Image.Image, children: Optional[List[Image.Image]]=None) -> None:
         if children:
-            for child,box in children:
-                evaluated[0].paste(im=child, box=box)
+            for child in children:
+                evaluated.paste(im=child, box=child.info.get("position"))
+
+class PositionComponent:
+    @post_effect
+    def apply_position(self, *, context: Any, evaluated: Image.Image, parent_size: Tuple[int, int]=REQUIRED, left: float=0, top: float=0) -> None:
+        evaluated.info.update({"position": (int(parent_size[0] * left), int(parent_size[1] * top))})
 
 class SizeComponent:
     @compute_field(forward=True)
-    def size(self, *, context: Any, size: Tuple[int, int]=REQUIRED, width: float=REQUIRED, height: float=REQUIRED) -> Tuple[int, int]:
+    def parent_size(self, *, context: Any, size: Tuple[int, int]=(-1, -1)) -> Tuple[int, int]:
+        assert size != (-1, -1), f"Parent Element did not forward 'size' field, does it subclass {__class__.__name__}?"
+        return size
+
+    @compute_field(forward=True)
+    def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1), width: float=REQUIRED, height: float=REQUIRED) -> Tuple[int, int]:
+        assert size != (-1, -1), f"Parent Element did not forward 'size' field, does it subclass {__class__.__name__}?"
         return (int(size[0] * width), int(size[1] * height))
 
 class Canvas(Element[UiContext], ChildrenComponent, SizeComponent):
@@ -28,16 +39,17 @@ class Canvas(Element[UiContext], ChildrenComponent, SizeComponent):
             "children": children
         }
 
-    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED) -> Tuple[Image.Image, Tuple[int, int]]:
-        base: Image.Image = Image.new(mode="RGB", size=size)
-        return (base, (0, 0))
+    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED) -> Image.Image:
+        return Image.new(mode="RGBA", size=size)
 
-class Box(Element[UiContext], ChildrenComponent, SizeComponent):
-    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED) -> Tuple[Image.Image, Tuple[int, int]]:
-        base: Image.Image = Image.new(mode="RGB", size=size, color=(0, 255, 0))
-        return (base, (0, 0))
+class Container(Element[UiContext], ChildrenComponent, PositionComponent, SizeComponent):
+    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED, background_color: Tuple[int, ...]=(0, 255, 0, 255)) -> Image.Image:
+        return Image.new(mode="RGBA", size=size, color=background_color)
 
-@element(Box, Canvas)
+@element(
+    Canvas,
+    Container
+)
 class Ui(Plugin[UiContext]):
     def new_context(self) -> UiContext:
         return None

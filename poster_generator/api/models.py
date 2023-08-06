@@ -50,11 +50,11 @@ class Expression(ABC, Generic[T, U]):
     _fields: Dict[str, Any]
     
     @classmethod
-    def _get_default_fns(cls) -> set[Callable[..., Any]]:
-        fns: set[Callable[..., Any]] = set()
-        fns.update(cls.get_compute_fields())
-        fns.update(cls.get_post_effects())
-        fns.add(cls.evaluate)
+    def _get_default_fns(cls) -> List[Callable[..., Any]]:
+        fns: List[Callable[..., Any]] = []
+        fns += list(cls.get_compute_fields())
+        fns += list(cls.get_post_effects())
+        fns.append(cls.evaluate)
         return fns
 
     @classmethod
@@ -66,12 +66,21 @@ class Expression(ABC, Generic[T, U]):
         return {param for _,param in fields}
 
     @classmethod
-    def get_allowed_fields(cls, fns: Optional[Union[Callable[..., Any], set[Callable[..., Any]]]]=None) -> set[Parameter]:
+    def get_allowed_fields(cls, fns: Optional[Union[Callable[..., Any], List[Callable[..., Any]], set[Callable[..., Any]]]]=None) -> set[Parameter]:
         fns = fns or cls._get_default_fns()
         fields: set[Parameter] = set()
-        if type(fns) == set:
+        if type(fns) == list:
+            compute_fields: set[Callable[..., Any]] = cls.get_compute_fields()
+            tracked_params: set[str] = set()
             for fn in cast(set[Callable[..., Any]], fns):
-                fields.update(signature(fn).parameters.values())
+                for param in signature(fn).parameters.values():
+                    if param.name not in tracked_params:
+                        tracked_params.add(param.name)
+                        fields.add(param)
+                if fn in compute_fields:
+                    tracked_params.add(fn.__name__)
+        elif type(fns) == set:
+            return cls.get_allowed_fields(list(cast(Any, fns)))
         else:
             fields = set(signature(cast(Callable[..., Any], fns)).parameters.values())
         fields = {field for field in fields if field.name not in ("self", "context", "evaluated")}
@@ -91,21 +100,19 @@ class Expression(ABC, Generic[T, U]):
         return cls._get_fields_with_attr(DECORATOR_ATTR_POST_EFFECT)
 
     @classmethod
-    def get_required_fields(cls, fns: Optional[set[Callable[..., Any]]]=None) -> set[Parameter]:
+    def get_required_fields(cls, fns: Optional[List[Callable[..., Any]]]=None) -> set[Parameter]:
         fns = fns or cls._get_default_fns()
         field_names: set[str] = {fn.__name__ for fn in fns}
-        required_fields: set[Parameter] = set()
-        for fn in fns:
-            required_fields.update(set(filter(
-                lambda x: x.name not in field_names and x.default == REQUIRED,
-                cls.get_allowed_fields(fn)
-            )))
+        required_fields: set[Parameter] = set(filter(
+            lambda x: x.name not in field_names and x.default == REQUIRED,
+            cls.get_allowed_fields(fns)
+        ))
         return required_fields
         
     def evaluate(self, *, context: U) -> T:
         raise NotImplemented
 
-class Element(Expression[Tuple[Image, Tuple[int, int]], T]):
+class Element(Expression[Image, T]):
     pass
 
 class Plugin(ABC, Generic[T]):

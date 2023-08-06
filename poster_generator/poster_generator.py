@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from dataclasses import asdict
 from PIL import Image
 from pydoc import locate
-from typing import Any, Dict, List, Optional, Tuple, Type
+from typing import Any, Dict, List, Optional, Type
 from .api.models import Element, Expression
 from .core_plugins import Args
 from .core_plugins.ui import Canvas
@@ -32,6 +32,4 @@ def generate_poster(template: PosterTemplate, args: List[Any], debug: bool=False
 
     canvas: Element[Any] = Canvas(template.meta.width, template.meta.height, content)
 
-    render: Tuple[Image.Image, Tuple[int, int]] = active_context.evaluate(canvas)
-
-    return render[0]
+    return active_context.evaluate(canvas)

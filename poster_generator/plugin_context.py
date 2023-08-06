@@ -49,8 +49,7 @@ class PluginContext:
                 parsed_fields: Dict[str, Any] = {}
                 for param in obj_class.get_allowed_fields():
                     try:
-                        t: type = param.annotation if param in required_fields else Optional[param.annotation]
-                        parsed_fields[param.name] = self._parse_raw_object(raw_dict.get(param.name), t)
+                        parsed_fields[param.name] = self._parse_raw_object(raw_dict.get(param.name, param.default), param.annotation)
                     except Exception as e:
                         raise Exception(f"Failed to parse field '{param.name}': {e}")
                 missing_fields: List[str] = [param.name for param in required_fields if param.name not in parsed_fields]
