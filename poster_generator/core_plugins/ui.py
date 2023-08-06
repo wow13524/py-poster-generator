@@ -1,6 +1,5 @@
 from types import NoneType
-from typing import Any, List, Tuple, TypeVar
-
+from typing import Any, List, Optional, Tuple, TypeVar
 from PIL import Image
 from poster_generator.api import Element, Plugin, REQUIRED, compute_field, element, post_effect
 
@@ -9,9 +8,10 @@ T = TypeVar("T")
 
 class ChildrenComponent:
     @post_effect
-    def apply_children(self, *, context: Any, evaluated: Image.Image, children: List[Tuple[Image.Image, Tuple[int, int]]]) -> None:
-        for child,box in children:
-            evaluated.paste(im=child, box=box)
+    def apply_children(self, *, context: Any, evaluated: Image.Image, children: Optional[List[Tuple[Image.Image, Tuple[int, int]]]]=None) -> None:
+        if children:
+            for child,box in children:
+                evaluated.paste(im=child, box=box)
 
 class SizeComponent:
     @compute_field(forward=True)
