@@ -85,7 +85,6 @@ class Expression(ABC, Generic[T, U]):
             fields = set(signature(cast(Callable[..., Any], fns)).parameters.values())
         fields = {field for field in fields if field.name not in ("self", "context", "evaluated")}
         return fields
-        
 
     @classmethod
     def get_compute_fields(cls) -> set[Callable[..., Any]]:

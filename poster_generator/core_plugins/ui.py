@@ -43,7 +43,7 @@ class Canvas(Element[UiContext], ChildrenComponent, SizeComponent):
         return Image.new(mode="RGBA", size=size)
 
 class Container(Element[UiContext], ChildrenComponent, PositionComponent, SizeComponent):
-    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED, background_color: Tuple[int, ...]=(0, 255, 0, 255)) -> Image.Image:
+    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED, background_color: Tuple[int, ...]=(0, 0, 0, 0)) -> Image.Image:
         return Image.new(mode="RGBA", size=size, color=background_color)
 
 @element(

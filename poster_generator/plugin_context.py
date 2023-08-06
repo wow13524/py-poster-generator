@@ -35,10 +35,12 @@ class PluginContext:
                         self._expression_name_map[expression_name] = expression_class
     
     def _parse_raw_object(self, raw_obj: Any, obj_type: type) -> Any:
+        to_check_type: type = Union[obj_type, Expression[obj_type, Any]]
         type_args: Tuple[type, ...] = get_args(obj_type)
         if type(raw_obj) == list:
             raw_list: List[Any] = raw_obj
-            obj = [self._parse_raw_object(v, type_args[0]) for v in check_type(raw_list, obj_type)]
+            obj = [self._parse_raw_object(v, cast(Any, type_args)[0]) for v in raw_list]
+            to_check_type = List[Union[cast(Any, type_args)[0], Expression[cast(Any, type_args)[0], Any]]]
         elif type(raw_obj) == dict:
             raw_dict: Dict[str, Any] = raw_obj
             if EXPRESSION_SPECIAL_TYPE in raw_dict:
@@ -58,13 +60,13 @@ class PluginContext:
                 setattr(obj, "_fields", parsed_fields)
             else:
                 obj = {
-                    key: self._parse_raw_object(value, type_args[1])
+                    key: self._parse_raw_object(value, cast(Any, type_args)[1])
                     for key,value in raw_dict.items()
                 }
         else:
             obj = raw_obj
         try:
-            return check_type(obj, Union[obj_type, Expression[obj_type, Any]], collection_check_strategy=CollectionCheckStrategy.ALL_ITEMS)
+            return check_type(obj, to_check_type, collection_check_strategy=CollectionCheckStrategy.ALL_ITEMS)
         except Exception as e:
             raise Exception(f"Expected type {obj_type}, got {type(cast(Any, raw_obj))}, due to Typeguard Exception:\n"+str(e))
     
