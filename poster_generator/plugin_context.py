@@ -35,9 +35,7 @@ class PluginContext:
                         self._expression_name_map[expression_name] = expression_class
     
     def _parse_raw_object(self, raw_obj: Any, obj_type: type) -> Any:
-        obj: Any
         type_args: Tuple[type, ...] = get_args(obj_type)
-        type_error: str = f"""Expected type {obj_type}, got {type(raw_obj)}"""
         if type(raw_obj) == list:
             raw_list: List[Any] = raw_obj
             obj = [self._parse_raw_object(v, type_args[0]) for v in check_type(raw_list, obj_type)]
@@ -69,7 +67,7 @@ class PluginContext:
         try:
             return check_type(obj, Union[obj_type, Expression[obj_type, Any]], collection_check_strategy=CollectionCheckStrategy.ALL_ITEMS)
         except Exception as e:
-            raise Exception(type_error+"\n\nDue to Typeguard Exception:\n"+str(e))
+            raise Exception(f"Expected type {obj_type}, got {type(cast(Any, raw_obj))}, due to Typeguard Exception:\n"+str(e))
     
     def new_active_context(self) -> ActiveContext:
         return ActiveContext(self._plugin_map)
