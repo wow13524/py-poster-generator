@@ -21,8 +21,7 @@ class PositionComponent:
 class SizeComponent:
     @compute_field(forward=True)
     def parent_size(self, *, context: Any, size: Tuple[int, int]=(-1, -1)) -> Tuple[int, int]:
-        assert size != (-1, -1), f"Parent Element did not forward 'size' field, does it subclass {__class__.__name__}?"
-        return size
+        return self.size(context=context, size=size, width=1, height=1)
 
     @compute_field(forward=True)
     def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1), width: float=REQUIRED, height: float=REQUIRED) -> Tuple[int, int]:
@@ -48,9 +47,8 @@ class Container(Element[UiContext], ChildrenComponent, PositionComponent, SizeCo
 
 class ListLayout(Element[UiContext], SizeComponent):
     @compute_field(forward=True)
-    def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1)) -> Tuple[int, int]:
-        assert size != (-1, -1), f"Parent Element did not forward 'size' field, does it subclass {__class__.__name__}?"
-        return size
+    def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1), width: float=1, height: float=1) -> Tuple[int, int]:
+        return SizeComponent.size(self, context=context, size=size, width=width, height=height)
 
     def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED) -> Image.Image:
         return Image.new(mode="RGBA", size=size)
