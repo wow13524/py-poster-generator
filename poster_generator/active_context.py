@@ -1,5 +1,5 @@
 from inspect import Parameter
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, cast
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, cast
 from .api import Expression, Plugin
 
 T = TypeVar("T")
@@ -17,28 +17,28 @@ class ActiveContext:
     def _evaluate_fields(self, obj: Expression[Any, Any], evaluated: Dict[str, Any], filter_params: Optional[set[Parameter]]=None) -> Dict[str, Any]:
         raw_fields: Dict[str, Any] = getattr(obj, "_fields")
         filter_param_names: set[str] = set(map(name_str, filter_params or obj.get_allowed_fields()))
-        forward_fields: set[Callable[..., Any]] = obj.get_forward_fields()
-        forward_field_names: set[str] = set(map(uname_str, forward_fields))
-        evaluated_forward_fields: Dict[str, Any] = {
+        to_forward_fields: set[Callable[..., Any]] = obj.get_forward_fields()
+        to_forward_field_names: set[str] = set(map(uname_str, to_forward_fields))
+        evaluated_to_forward_fields: Dict[str, Any] = {
             field: value
             for field,value in evaluated.items()
-            if field in forward_field_names
+            if field in to_forward_field_names
         }
         evaluated_fields: Dict[str, Any] = {}
         for field,value in raw_fields.items():
             if field in filter_param_names and field not in evaluated:
                 if type(value) == list:
                     value = [
-                        self.evaluate(cast(Expression[Any, Any], v), evaluated) if isinstance(v, Expression) else v 
-                        for v in cast(List[Any], value)
+                        self.evaluate(v, evaluated) if isinstance(v, Expression) else v
+                        for v in cast(List[Union[Any, Expression[Any, Any]]], value)
                     ]
                 elif type(value) == dict:
                     value = {
-                        k: self.evaluate(cast(Expression[Any, Any], v), evaluated) if isinstance(v, Expression) else v 
-                        for k,v in cast(Dict[str, Any], value).items()
+                        k: self.evaluate(v, evaluated) if isinstance(v, Expression) else v
+                        for k,v in cast(Dict[str, Union[Any, Expression[Any, Any]]], value).items()
                     }
                 elif isinstance(value, Expression):
-                    value = self.evaluate(cast(Expression[Any, Any], value), evaluated_forward_fields)
+                    value = self.evaluate(cast(Expression[Any, Any], value), evaluated_to_forward_fields)
                 evaluated_fields[field] = value
         return evaluated_fields
 
