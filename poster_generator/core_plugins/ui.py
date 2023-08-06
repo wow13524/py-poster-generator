@@ -1,5 +1,5 @@
 from types import NoneType
-from typing import Any, List, Optional, Tuple, TypeVar
+from typing import Any, List, Literal, Optional, Tuple, TypeVar
 from PIL import Image
 from poster_generator.api import Element, Plugin, REQUIRED, compute_field, element, post_effect
 
@@ -46,9 +46,27 @@ class Container(Element[UiContext], ChildrenComponent, PositionComponent, SizeCo
     def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED, background_color: Tuple[int, ...]=(0, 0, 0, 0)) -> Image.Image:
         return Image.new(mode="RGBA", size=size, color=background_color)
 
+class ListLayout(Element[UiContext], SizeComponent):
+    @compute_field(forward=True)
+    def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1)) -> Tuple[int, int]:
+        assert size != (-1, -1), f"Parent Element did not forward 'size' field, does it subclass {__class__.__name__}?"
+        return size
+
+    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED) -> Image.Image:
+        return Image.new(mode="RGBA", size=size)
+
+    @post_effect
+    def apply_children(self, *, context: Any, evaluated: Image.Image, children: Optional[List[Image.Image]]=None, direction: Literal["horizontal", "vertical"]="vertical") -> None:
+        if children:
+            offset: int = 0
+            for child in children:
+                evaluated.alpha_composite(im=child, dest=(offset, 0) if direction == "horizontal" else (0, offset))
+                offset += child.width if direction == "horizontal" else child.height
+
 @element(
     Canvas,
-    Container
+    Container,
+    ListLayout
 )
 class Ui(Plugin[UiContext]):
     def new_context(self) -> UiContext:
