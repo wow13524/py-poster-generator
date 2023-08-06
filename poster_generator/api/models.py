@@ -2,11 +2,49 @@ from abc import ABC
 from PIL.Image import Image
 from inspect import Parameter, getmembers, isfunction, signature
 from typing import Any, Callable, ClassVar, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union, cast
-from .constants import REQUIRED
+from .constants import DECORATOR_ATTR_COMPUTE_FIELD, DECORATOR_ATTR_FORWARD_FIELD, REQUIRED
 
 T = TypeVar("T")
 U = TypeVar("U")
 
+"""
+Expression is an ABC which can be subclassed to represent a type of arbitrary
+expression which can then be evaluated under a given context to yield a value.
+Every Expression belongs to a Plugin which is responsible for creating contexts
+that can be used when evaluating expressions.  An Expression is defined by the
+following:
+- Any instance methods decorated as a compute_field
+- Its evaluate() method
+- Any instance methods decorated as a post_effect
+Each of these methods also define required and optional fields in their method
+signatures, and these are compiled to determine all of the fields required in
+order to evaluate an Expression.
+When evaluating an Expression, all of the methods are executed in the following
+order:
+- Any instance methods decorated as a compute_field
+    - These methods are evaluated first and their returned values are then made
+      available for use after all compute_fields are evaluated.
+    - The evaluated compute_fields can also optionally have their values
+      forwarded to all child Expression evaluations.
+- Its evaluate() method
+    - The evaluate() method is evaluated with all of its requested fields as
+      well as any compute_fields.
+    - The resulting value is what the Expression is considered to evaluate to.
+- Any instance methods decorated as a post_effect
+    - These methods are evaluated last and are not expected to return anything.
+    - These methods accept an additional 'evaluated' field which holds the
+      result of evaluate().
+    - These methods are especially useful for subclassable components which can
+      require fields and perform actions without any additional support from
+      subclasses.
+While an Expression can define required and optional fields which are then
+passed in by the user, these fields are not limited to explicit value types.
+An Expression can also accept additional Expression objects in place of
+explicit values when satisfying field requirements.
+In this way, with the ability for developers to define their own Expression
+classes, end users will have the ability to define and execute complex
+routines under conditions imposed by the Expression classes made available.
+"""
 class Expression(ABC, Generic[T, U]):
     _plugin: ClassVar['Plugin[Any]']
     _fields: Dict[str, Any]
@@ -41,11 +79,11 @@ class Expression(ABC, Generic[T, U]):
 
     @classmethod
     def get_compute_fields(cls) -> set[Callable[..., Any]]:
-        return cls._get_fields_with_attr("_compute_field")
+        return cls._get_fields_with_attr(DECORATOR_ATTR_COMPUTE_FIELD)
     
     @classmethod
     def get_forward_fields(cls) -> set[Callable[..., Any]]:
-        return cls._get_fields_with_attr("_forward")
+        return cls._get_fields_with_attr(DECORATOR_ATTR_FORWARD_FIELD)
 
     @classmethod
     def get_required_fields(cls, fns: Optional[set[Callable[..., Any]]]=None) -> set[Parameter]:

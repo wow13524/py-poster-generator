@@ -1,9 +1,9 @@
 from importlib import import_module
 from inspect import Parameter, getmembers, isclass
 from typeguard import check_type
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast, get_args, get_origin
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast, get_args
 from .active_context import ActiveContext
-from .api import Element, Expression, Plugin
+from .api import Element, Expression, Plugin, EXPRESSION_SPECIAL_TYPE
 
 T = TypeVar("T")
 
@@ -38,46 +38,42 @@ class PluginContext:
                         
                         self._expression_name_map[expression_name] = expression_class
     
-    def _parse_raw_object(self, raw_obj: Any, obj_type: Type[T]) -> T:
+    def _parse_raw_object(self, raw_obj: Any, obj_type: type) -> Any:
         obj: Any
-        type_origin: Optional[type] = get_origin(obj_type)
         type_args: Tuple[type, ...] = get_args(obj_type)
-        type_error: str = f"""Expected type {uname_str(obj_type)}{f"[{', '.join(map(uname_str, type_args))}]" if type_args else ""}, got {uname_str(type(raw_obj))}"""
+        type_error: str = f"""Expected type {obj_type}, got {uname_str(type(raw_obj))}"""
         if type(raw_obj) == list:
-            assert type(cast(Any, raw_obj)) == list, type_error
-            obj = [self._parse_raw_object(v, Union[cast(Any, type_args)[0], Expression[Any, Any]]) for v in cast(List[Any], raw_obj)]
+            raw_list: List[Any] = raw_obj
+            obj = [self._parse_raw_object(v, type_args[0]) for v in check_type(raw_list, obj_type)]
         elif type(raw_obj) == dict:
-            raw_dict = cast(Dict[str, Any], raw_obj)
-            if "@type" in raw_dict:
-                raw_type: str = raw_dict["@type"]
+            raw_dict: Dict[str, Any] = raw_obj
+            if EXPRESSION_SPECIAL_TYPE in raw_dict:
+                raw_type: str = raw_dict[EXPRESSION_SPECIAL_TYPE]
                 obj_class: Optional[Type[Expression[Any, Any]]] = self._expression_name_map.get(raw_type)
-                assert obj_class is not None, f"Plugin containing '{obj_class}' not imported"
+                assert obj_class is not None, f"Plugin containing {EXPRESSION_SPECIAL_TYPE}='{raw_type}' not imported"
                 required_fields: set[Parameter] = obj_class.get_required_fields()
-                parsed_required_fields: Dict[str, Any] = {}
+                parsed_fields: Dict[str, Any] = {}
                 for param in obj_class.get_allowed_fields():
                     try:
-                        t: type = Union[param.annotation, Expression[Any, Any]]
-                        if param not in required_fields:
-                            t = Optional[t]
-                        parsed_required_fields[param.name] = self._parse_raw_object(raw_dict.get(param.name), t)
+                        t: type = param.annotation if param in required_fields else Optional[param.annotation]
+                        parsed_fields[param.name] = self._parse_raw_object(raw_dict.get(param.name), t)
                     except Exception as e:
                         raise Exception(f"Failed to parse field '{param.name}': {e}")
-                missing_keys: List[str] = [param.name for param in required_fields if param.name not in parsed_required_fields]
-                assert not any(missing_keys), f"Missing keys {missing_keys}"
+                missing_fields: List[str] = [param.name for param in required_fields if param.name not in parsed_fields]
+                assert not any(missing_fields), f"Missing required fields {missing_fields}"
                 obj = obj_class()
-                setattr(obj, "_fields", parsed_required_fields)
+                setattr(obj, "_fields", parsed_fields)
             else:
-                assert type_origin == dict, type_error
                 obj = {
-                    key: self._parse_raw_object(value, Union[cast(Any, type_args)[1], Expression[Any, Any]])
+                    key: self._parse_raw_object(value, type_args[1])
                     for key,value in raw_dict.items()
                 }
         else:
             obj = raw_obj
         try:
-            return check_type(obj, obj_type)
+            return check_type(obj, Union[obj_type, Expression[obj_type, Any]])
         except Exception as e:
-            raise Exception(type_error+"\n"+str(e))
+            raise Exception(type_error+"\n\nDue to Typeguard Exception:\n"+str(e))
     
     def new_active_context(self) -> ActiveContext:
         return ActiveContext(self._plugin_map)
