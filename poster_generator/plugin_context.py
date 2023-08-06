@@ -1,15 +1,11 @@
 from importlib import import_module
 from inspect import Parameter, getmembers, isclass
-from typeguard import check_type
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast, get_args
+from typeguard import CollectionCheckStrategy, check_type
+from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast, get_args
 from .active_context import ActiveContext
 from .api import Element, Expression, Plugin, EXPRESSION_SPECIAL_TYPE
 
-T = TypeVar("T")
-
 DEFAULT_PLUGINS = ["poster_generator.core_plugins"]
-
-uname_str: Callable[[type], str] = lambda callable: callable.__name__
 
 class PluginContext:
     def __init__(self, required_plugins: List[str]) -> None:
@@ -41,7 +37,7 @@ class PluginContext:
     def _parse_raw_object(self, raw_obj: Any, obj_type: type) -> Any:
         obj: Any
         type_args: Tuple[type, ...] = get_args(obj_type)
-        type_error: str = f"""Expected type {obj_type}, got {uname_str(type(raw_obj))}"""
+        type_error: str = f"""Expected type {obj_type}, got {type(raw_obj)}"""
         if type(raw_obj) == list:
             raw_list: List[Any] = raw_obj
             obj = [self._parse_raw_object(v, type_args[0]) for v in check_type(raw_list, obj_type)]
@@ -71,7 +67,7 @@ class PluginContext:
         else:
             obj = raw_obj
         try:
-            return check_type(obj, Union[obj_type, Expression[obj_type, Any]])
+            return check_type(obj, Union[obj_type, Expression[obj_type, Any]], collection_check_strategy=CollectionCheckStrategy.ALL_ITEMS)
         except Exception as e:
             raise Exception(type_error+"\n\nDue to Typeguard Exception:\n"+str(e))
     

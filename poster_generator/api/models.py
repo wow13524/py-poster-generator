@@ -2,7 +2,7 @@ from abc import ABC
 from PIL.Image import Image
 from inspect import Parameter, getmembers, isfunction, signature
 from typing import Any, Callable, ClassVar, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union, cast
-from .constants import DECORATOR_ATTR_COMPUTE_FIELD, DECORATOR_ATTR_FORWARD_FIELD, REQUIRED
+from .constants import DECORATOR_ATTR_COMPUTE_FIELD, DECORATOR_ATTR_FORWARD_FIELD, DECORATOR_ATTR_POST_EFFECT, REQUIRED
 
 T = TypeVar("T")
 U = TypeVar("U")
@@ -53,6 +53,7 @@ class Expression(ABC, Generic[T, U]):
     def _get_default_fns(cls) -> set[Callable[..., Any]]:
         fns: set[Callable[..., Any]] = set()
         fns.update(cls.get_compute_fields())
+        fns.update(cls.get_post_fields())
         fns.add(cls.evaluate)
         return fns
 
@@ -73,7 +74,7 @@ class Expression(ABC, Generic[T, U]):
                 fields.update(signature(fn).parameters.values())
         else:
             fields = set(signature(cast(Callable[..., Any], fns)).parameters.values())
-        fields = {field for field in fields if field.name not in ("self", "context")}
+        fields = {field for field in fields if field.name not in ("self", "context", "evaluated")}
         return fields
         
 
@@ -84,6 +85,10 @@ class Expression(ABC, Generic[T, U]):
     @classmethod
     def get_forward_fields(cls) -> set[Callable[..., Any]]:
         return cls._get_fields_with_attr(DECORATOR_ATTR_FORWARD_FIELD)
+    
+    @classmethod
+    def get_post_fields(cls) -> set[Callable[..., Any]]:
+        return cls._get_fields_with_attr(DECORATOR_ATTR_POST_EFFECT)
 
     @classmethod
     def get_required_fields(cls, fns: Optional[set[Callable[..., Any]]]=None) -> set[Parameter]:
