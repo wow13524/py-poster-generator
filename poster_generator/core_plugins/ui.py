@@ -8,10 +8,10 @@ T = TypeVar("T")
 
 class ChildrenComponent:
     @post_effect
-    def apply_children(self, *, context: Any, evaluated: Image.Image, children: Optional[List[Tuple[Image.Image, Tuple[int, int]]]]=None) -> None:
+    def apply_children(self, *, context: Any, evaluated: Tuple[Image.Image, Tuple[int, int]], children: Optional[List[Tuple[Image.Image, Tuple[int, int]]]]=None) -> None:
         if children:
             for child,box in children:
-                evaluated.paste(im=child, box=box)
+                evaluated[0].paste(im=child, box=box)
 
 class SizeComponent:
     @compute_field(forward=True)

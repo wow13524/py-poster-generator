@@ -14,7 +14,7 @@ class ActiveContext:
             for plugin_class, plugin in plugin_map.items()
         }
     
-    def _evaluate_fields(self, obj: Expression[Any, Any], evaluated: Dict[str, Any], filter_params: Optional[set[Parameter]]=None) -> None:
+    def _evaluate_fields(self, obj: Expression[Any, Any], evaluated: Dict[str, Any], filter_params: Optional[set[Parameter]]=None) -> Dict[str, Any]:
         raw_fields: Dict[str, Any] = getattr(obj, "_fields")
         filter_param_names: set[str] = set(map(name_str, filter_params or obj.get_allowed_fields()))
         forward_fields: set[Callable[..., Any]] = obj.get_forward_fields()
@@ -40,7 +40,7 @@ class ActiveContext:
                 elif isinstance(value, Expression):
                     value = self.evaluate(cast(Expression[Any, Any], value), evaluated_forward_fields)
                 evaluated_fields[field] = value
-        evaluated.update(evaluated_fields)
+        return evaluated_fields
 
     def _filter_fields(self, fn: Callable[..., Any], fields: Dict[str, Any]) -> Dict[str, Any]:
         allowed_fields: set[Parameter] = Expression.get_allowed_fields(fn)
@@ -60,15 +60,15 @@ class ActiveContext:
     def evaluate(self, obj: Expression[T, Any], forwarded_fields: Optional[Dict[str, Any]]=None) -> T:
         context: Any = self._get_context(obj.__class__)
         compute_fields: set[Callable[..., Any]] = obj.get_compute_fields()
+        post_effects: set[Callable[..., None]] = obj.get_post_effects()
         evaluated_fields: Dict[str, Any] = forwarded_fields.copy() if forwarded_fields else {}
-        forwarded_fields_evaluation: Dict[str, Any] = evaluated_fields.copy()
-        self._evaluate_fields(obj, forwarded_fields_evaluation, obj.get_allowed_fields(compute_fields))
-        evaluated_fields.update({
-            fn.__name__: fn(obj, context=context, **self._filter_fields(fn, forwarded_fields_evaluation))
-            for fn in compute_fields
-        })
-        self._evaluate_fields(obj, evaluated_fields)
-        return obj.evaluate(context=context, **self._filter_fields(obj.evaluate, evaluated_fields))
+        compute_required_fields: Dict[str, Any] = {**evaluated_fields, **self._evaluate_fields(obj, evaluated_fields, obj.get_allowed_fields(compute_fields))}
+        for compute_field in compute_fields:
+            evaluated_fields[uname_str(compute_field)] = compute_field(obj, context=context, **self._filter_fields(compute_field, compute_required_fields))
+        evaluated_fields.update(self._evaluate_fields(obj, evaluated_fields))
+        evaluated: T = obj.evaluate(context=context, **self._filter_fields(obj.evaluate, evaluated_fields))
+        [fn(obj, context=context, evaluated=evaluated, **self._filter_fields(fn, evaluated_fields)) for fn in post_effects]
+        return evaluated
 
     def update(self, plugin_class: Type[Plugin[T]], context: T) -> None:
         if plugin_class not in self._context:

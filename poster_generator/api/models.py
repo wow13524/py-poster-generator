@@ -53,7 +53,7 @@ class Expression(ABC, Generic[T, U]):
     def _get_default_fns(cls) -> set[Callable[..., Any]]:
         fns: set[Callable[..., Any]] = set()
         fns.update(cls.get_compute_fields())
-        fns.update(cls.get_post_fields())
+        fns.update(cls.get_post_effects())
         fns.add(cls.evaluate)
         return fns
 
@@ -87,7 +87,7 @@ class Expression(ABC, Generic[T, U]):
         return cls._get_fields_with_attr(DECORATOR_ATTR_FORWARD_FIELD)
     
     @classmethod
-    def get_post_fields(cls) -> set[Callable[..., Any]]:
+    def get_post_effects(cls) -> set[Callable[..., None]]:
         return cls._get_fields_with_attr(DECORATOR_ATTR_POST_EFFECT)
 
     @classmethod
