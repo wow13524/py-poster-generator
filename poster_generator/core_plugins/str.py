@@ -3,6 +3,10 @@ from typing import Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 
 T = TypeVar("T")
 
+class Construct(Expression[str, None]):
+    def evaluate(self, *, context: None, object: object="") -> str:
+        return str(object)
+
 class Capitalize(Expression[str, None]):
     def evaluate(self, *, context: None, s: str=REQUIRED) -> str:
         return s.capitalize()
@@ -196,6 +200,7 @@ class Zfill(Expression[str, None]):
         return s.zfill(width)
 
 @expression(
+    Construct,
     Capitalize,
     Casefold,
     Center,
