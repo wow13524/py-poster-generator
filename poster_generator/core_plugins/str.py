@@ -36,8 +36,8 @@ class Find(Expression[int, None]):
         return s.find(sub, start, end)
 
 class Format(Expression[str, None]):
-    def evaluate(self,  *args: object, context: None, s: str=REQUIRED, **kwargs: object) -> str:
-        return s.format(*args, **kwargs)
+    def evaluate(self,  *, context: None, s: str=REQUIRED, args: Optional[List[object]]=None, kwargs: Optional[Dict[str, object]]=None) -> str:
+        return s.format(*(args or []), **(kwargs or {}))
 
 class FormatMap(Expression[str, None]):
     def evaluate(self, *, context: None, s: str=REQUIRED, map: Dict[str, object]=REQUIRED) -> str:

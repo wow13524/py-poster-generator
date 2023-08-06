@@ -1,7 +1,7 @@
 from importlib import import_module
 from inspect import Parameter, getmembers, isclass
 from typeguard import CollectionCheckStrategy, check_type
-from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast, get_args
+from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast, get_args, get_origin
 from .active_context import ActiveContext
 from .api import Element, Expression, Plugin, EXPRESSION_SPECIAL_TYPE
 
@@ -34,13 +34,22 @@ class PluginContext:
                         
                         self._expression_name_map[expression_name] = expression_class
     
+    #Optional[Union[str, List[str]]]
+    
+    @staticmethod
+    def _make_type_expression_safe(typ: type) -> type:
+        if (origin := get_origin(typ)):
+            args = [PluginContext._make_type_expression_safe(arg) for arg in get_args(typ)]
+            return Union[typ, origin[*args], Expression[typ, Any]]
+        return Union[typ, Expression[typ, Any]]
+
     def _parse_raw_object(self, raw_obj: Any, obj_type: type) -> Any:
-        to_check_type: type = Union[obj_type, Expression[obj_type, Any]]
+        to_check_type: type = self._make_type_expression_safe(obj_type)
+        type_origin: Optional[type] = get_origin(obj_type)
         type_args: Tuple[type, ...] = get_args(obj_type)
         if type(raw_obj) == list:
             raw_list: List[Any] = raw_obj
-            obj = [self._parse_raw_object(v, cast(Any, type_args)[0]) for v in raw_list]
-            to_check_type = List[Union[cast(Any, type_args)[0], Expression[cast(Any, type_args)[0], Any]]]
+            obj = [self._parse_raw_object(v, type_args[0] if type_origin is list else Any) for v in raw_list]
         elif type(raw_obj) == dict:
             raw_dict: Dict[str, Any] = raw_obj
             if EXPRESSION_SPECIAL_TYPE in raw_dict:
@@ -60,7 +69,7 @@ class PluginContext:
                 setattr(obj, "_fields", parsed_fields)
             else:
                 obj = {
-                    key: self._parse_raw_object(value, cast(Any, type_args)[1])
+                    key: self._parse_raw_object(value, type_args[1] if type_origin is dict else Any)
                     for key,value in raw_dict.items()
                 }
         else:
