@@ -1,5 +1,6 @@
-from .models import Element, Expression, Plugin
 from typing import Any, Callable, Optional, Type, TypeVar
+from .constants import DECORATOR_ATTR_COMPUTE_FIELD, DECORATOR_ATTR_FORWARD_FIELD, DECORATOR_ATTR_POST_EFFECT
+from .models import Element, Expression, Plugin
 
 T = TypeVar("T")
 
@@ -15,10 +16,14 @@ def expression(*expression_classes: Type[Expression[Any, T]]) -> Callable[[Type[
 def element(*element_classes: Type[Element[T]]) -> Callable[[Type[Plugin[T]]], Type[Plugin[T]]]:
     return expression(*element_classes)
 
-def field(fn: Optional[Callable[..., Any]]=None, *, forward: bool=False) -> Callable[..., Any]:
+def compute_field(fn: Optional[Callable[..., Any]]=None, *, forward: bool=False) -> Callable[..., Any]:
     def inner(fn: Callable[..., T]) -> Callable[..., T]:
-        setattr(fn, "_compute_field", True)
+        setattr(fn, DECORATOR_ATTR_COMPUTE_FIELD, True)
         if forward:
-            setattr(fn, "_forward", True)
+            setattr(fn, DECORATOR_ATTR_FORWARD_FIELD, True)
         return fn
     return inner if fn is None else inner(fn)
+
+def post_effect(fn: Callable[..., None]) -> Callable[..., None]:
+    setattr(fn, DECORATOR_ATTR_POST_EFFECT, True)
+    return fn

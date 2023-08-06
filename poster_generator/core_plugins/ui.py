@@ -2,19 +2,19 @@ from types import NoneType
 from typing import Any, List, Tuple, TypeVar
 
 from PIL import Image
-from poster_generator.api import Element, Plugin, REQUIRED, element,  field
+from poster_generator.api import Element, Plugin, REQUIRED, compute_field, element, post_effect
 
 UiContext = NoneType
 T = TypeVar("T")
 
 class ChildrenComponent:
-    @staticmethod
-    def apply_children(base: Image.Image, children: List[Tuple[Image.Image, Tuple[int, int]]]) -> None:
+    @post_effect
+    def apply_children(self, *, context: Any, evaluated: Image.Image, children: List[Tuple[Image.Image, Tuple[int, int]]]) -> None:
         for child,box in children:
-            base.paste(im=child, box=box)
+            evaluated.paste(im=child, box=box)
 
 class SizeComponent:
-    @field(forward=True)
+    @compute_field(forward=True)
     def size(self, *, context: Any, size: Tuple[int, int]=REQUIRED, width: float=REQUIRED, height: float=REQUIRED) -> Tuple[int, int]:
         return (int(size[0] * width), int(size[1] * height))
 
@@ -28,13 +28,12 @@ class Canvas(Element[UiContext], ChildrenComponent, SizeComponent):
             "children": children
         }
 
-    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED, children: List[Tuple[Image.Image, Tuple[int, int]]]=REQUIRED) -> Tuple[Image.Image, Tuple[int, int]]:
+    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED) -> Tuple[Image.Image, Tuple[int, int]]:
         base: Image.Image = Image.new(mode="RGB", size=size)
-        self.apply_children(base, children)
         return (base, (0, 0))
 
 class Box(Element[UiContext], ChildrenComponent, SizeComponent):
-    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED, children: List[Tuple[Image.Image, Tuple[int, int]]]=REQUIRED) -> Tuple[Image.Image, Tuple[int, int]]:
+    def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED) -> Tuple[Image.Image, Tuple[int, int]]:
         base: Image.Image = Image.new(mode="RGB", size=size, color=(0, 255, 0))
         return (base, (0, 0))
 
