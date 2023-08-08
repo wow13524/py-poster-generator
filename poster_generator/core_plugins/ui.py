@@ -6,6 +6,9 @@ from poster_generator.api import Element, Expression, Plugin, REQUIRED, compute_
 UiContext = NoneType
 T = TypeVar("T")
 
+def to_pixels(size: int, dim: Tuple[int, float]) -> int:
+    return int(dim[0] + size * dim[1] / 100.)
+
 class Dimension(Expression[Tuple[int, float], UiContext]):
     def evaluate(self, *, context: UiContext, px: int=0, percent: float=0) -> Tuple[int, float]:
         return (px, percent)
@@ -20,7 +23,7 @@ class ChildrenComponent:
 class PositionComponent:
     @post_effect
     def apply_position(self, *, context: Any, evaluated: Image.Image, parent_size: Tuple[int, int]=REQUIRED, left: Tuple[int, float]=(0, 0), top: Tuple[int, float]=(0, 0)) -> None:
-        evaluated.info.update({"position": (int(left[0] + parent_size[0] * left[1] / 100.), int(top[0] + parent_size[1] * top[1] / 100.))})
+        evaluated.info.update({"position": (to_pixels(parent_size[0], left), to_pixels(parent_size[1], top))})
 
 class SizeComponent:
     @compute_field(forward=True)
@@ -30,7 +33,7 @@ class SizeComponent:
     @compute_field(forward=True)
     def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1), width: Tuple[int, float]=(0, 0), height: Tuple[int, float]=(0, 0)) -> Tuple[int, int]:
         assert size != (-1, -1), f"Parent Element did not forward 'size' field, does it subclass {__class__.__name__}?"
-        return (int(width[0] + size[0] * width[1] / 100.), int(height[0] + size[1] * height[1] / 100.))
+        return (to_pixels(size[0], width), to_pixels(size[1], height))
 
 class Canvas(Element[UiContext], ChildrenComponent, SizeComponent):
     def __init__(self, width: int=-1, height: int=-1, children: List[Element[Any]]=[]) -> None:
@@ -58,7 +61,7 @@ class ListLayout(Element[UiContext], SizeComponent):
         return Image.new(mode="RGBA", size=size)
 
     @post_effect
-    def apply_children(self, *, context: Any, evaluated: Image.Image, children: Optional[List[Image.Image]]=None, direction: Literal["horizontal", "vertical"]="vertical") -> None:
+    def apply_children(self, *, context: Any, evaluated: Image.Image, children: Optional[List[Image.Image]]=None, direction: Literal["horizontal", "vertical"]="vertical", spacing: Tuple[int, float]=(0, 0)) -> None:
         if children:
             offset: int = 0
             for child in children:
