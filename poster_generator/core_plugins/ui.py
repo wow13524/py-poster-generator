@@ -67,6 +67,7 @@ class ListLayout(Element[UiContext], SizeComponent):
             for child in children:
                 evaluated.alpha_composite(im=child, dest=(offset, 0) if direction == "horizontal" else (0, offset))
                 offset += child.width if direction == "horizontal" else child.height
+                offset += to_pixels(evaluated.width if direction == "horizontal" else evaluated.height, spacing)
 
 @element(
     Canvas,
