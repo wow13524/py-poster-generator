@@ -1,7 +1,7 @@
 from typing import Any, List, Optional, Tuple
 from PIL import Image
 from poster_generator.api import REQUIRED, compute_field, post_effect
-from .data import Dimension
+from .classes import Dimension
 
 class ChildrenComponent:
     @post_effect
@@ -18,10 +18,9 @@ class PositionComponent:
 class SizeComponent:
     @compute_field(forward=True)
     def parent_size(self, *, context: Any, size: Tuple[int, int]=(-1, -1)) -> Tuple[int, int]:
-        return self.size(context=context, size=size, width=Dimension(percent=100), height=Dimension(percent=100))
+        return size
     
     @compute_field(forward=True)
     def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1), width: Dimension=Dimension(), height: Dimension=Dimension()) -> Tuple[int, int]:
         assert size != (-1, -1), f"Parent Element did not forward 'size' field, does it subclass {__class__.__name__}?"
-        print(self, context, size, width, height)
-        return (width.to_pixels(size[0]), width.to_pixels(size[1]))
+        return (width.to_pixels(size[0]), height.to_pixels(size[1]))

@@ -2,7 +2,7 @@ from types import NoneType
 from typing import Any, List, Literal, Optional, Tuple, TypeVar
 from PIL import Image
 from poster_generator.api import Element, Plugin, REQUIRED, compute_field, element, post_effect
-from .data import Dimension
+from .classes import Dimension
 from .ui_components import ChildrenComponent, PositionComponent, SizeComponent
 
 UiContext = NoneType
@@ -27,7 +27,7 @@ class Container(Element[UiContext], ChildrenComponent, PositionComponent, SizeCo
 
 class ListLayout(Element[UiContext], SizeComponent):
     @compute_field(forward=True)
-    def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1), width: Dimension=Dimension(), height: Dimension= Dimension()) -> Tuple[int, int]:
+    def size(self, *, context: Any, size: Tuple[int, int]=(-1, -1), width: Dimension=Dimension(percent=100), height: Dimension=Dimension(percent=100)) -> Tuple[int, int]:
         return SizeComponent.size(self, context=context, size=size, width=width, height=height)
 
     def evaluate(self, *, context: UiContext, size: Tuple[int, int]=REQUIRED) -> Image.Image:
