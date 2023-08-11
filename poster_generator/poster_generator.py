@@ -28,7 +28,6 @@ def generate_poster(template: PosterTemplate, args: List[Any], debug: bool=False
         parser.add_argument(*name_or_flags, **kwargs)
     
     active_context.update(Args, vars(parser.parse_args(args)))
-    print(list(map(active_context.evaluate, logic)))
 
     canvas: Element[Any] = Canvas(template.meta.width, template.meta.height, content)
 
