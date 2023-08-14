@@ -1,6 +1,7 @@
 #pyright: reportUnusedImport=false
 from .args import Args
 from .data import Data
+from .dict import Dict
 from .list import List
 from .str import Str
 from .tuple import Tuple
