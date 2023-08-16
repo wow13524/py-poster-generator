@@ -1,5 +1,5 @@
-from types import NoneType
 from poster_generator.api import Expression, Plugin, expression
+from types import NoneType
 from .classes import Dimension as CDimension
 
 DataContext = NoneType

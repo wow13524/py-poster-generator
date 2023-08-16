@@ -1,7 +1,7 @@
-from types import NoneType
-from typing import Any, List, Literal, Optional, Tuple, TypeVar
 from PIL import Image
 from poster_generator.api import Element, Plugin, REQUIRED, compute_field, element, post_effect
+from types import NoneType
+from typing import Any, List, Literal, Optional, Tuple, TypeVar
 from .classes import Dimension
 from .ui_components import ChildrenComponent, PositionComponent, SizeComponent
 

@@ -1,6 +1,6 @@
-from typing import Any, List, Optional, Tuple
 from PIL import Image
 from poster_generator.api import REQUIRED, compute_field, post_effect
+from typing import Any, List, Optional, Tuple
 from .classes import Dimension
 
 class ChildrenComponent:
