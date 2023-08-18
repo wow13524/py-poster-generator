@@ -24,13 +24,38 @@ class Pow(Expression[float, None]):
     def evaluate(self, *, context: None, a: float=REQUIRED, b: float=REQUIRED) -> float:
         return a ** b
 
+class Gt(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: float=REQUIRED, b: float=REQUIRED) -> bool:
+        return a > b
+
+class Gte(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: float=REQUIRED, b: float=REQUIRED) -> bool:
+        return a >= b
+
+class Lt(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: float=REQUIRED, b: float=REQUIRED) -> bool:
+        return a < b
+
+class Lte(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: float=REQUIRED, b: float=REQUIRED) -> bool:
+        return a <= b
+
+class Eq(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: float=REQUIRED, b: float=REQUIRED) -> bool:
+        return a == b
+
 @expression(
     Add,
     Sub,
     Mul,
     Div,
     Mod,
-    Pow
+    Pow,
+    Gt,
+    Gte,
+    Lt,
+    Lte,
+    Eq
 )
 class Math(Plugin[None]):
     def new_context(self) -> None:
