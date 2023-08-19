@@ -44,6 +44,11 @@ class Eq(Expression[bool, None]):
     def evaluate(self, *, context: None, a: float=REQUIRED, b: float=REQUIRED) -> bool:
         return a == b
 
+class Neq(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: float=REQUIRED, b: float=REQUIRED) -> bool:
+        return a != b
+
+
 @expression(
     Add,
     Sub,
@@ -55,7 +60,8 @@ class Eq(Expression[bool, None]):
     Gte,
     Lt,
     Lte,
-    Eq
+    Eq,
+    Neq
 )
 class Math(Plugin[None]):
     def new_context(self) -> None:
