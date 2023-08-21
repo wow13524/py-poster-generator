@@ -25,6 +25,10 @@ class Pow(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
         return a ** b
 
+class Round(Expression[Any, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
+        return round(a)
+
 class Gt(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
         return a > b
@@ -60,6 +64,7 @@ class Is(Expression[bool, None]):
     Div,
     Mod,
     Pow,
+    Round,
     Gt,
     Gte,
     Lt,
