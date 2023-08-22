@@ -16,6 +16,10 @@ class Mul(Expression[Any, None]):
 class Div(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
         return a / b
+    
+class Idiv(Expression[Any, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
+        return a // b
 
 class Mod(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
@@ -62,6 +66,7 @@ class Is(Expression[bool, None]):
     Sub,
     Mul,
     Div,
+    Idiv,
     Mod,
     Pow,
     Round,
