@@ -32,6 +32,14 @@ class Pow(Expression[Any, None]):
 class Round(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
         return round(a)
+    
+class Min(Expression[Any, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
+        return min(a)
+    
+class Max(Expression[Any, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
+        return max(a)
 
 class Gt(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
@@ -70,6 +78,8 @@ class Is(Expression[bool, None]):
     Mod,
     Pow,
     Round,
+    Min,
+    Max,
     Gt,
     Gte,
     Lt,
