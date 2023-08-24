@@ -29,6 +29,10 @@ class Pow(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
         return a ** b
 
+class Abs(Expression[Any, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
+        return abs(a)
+
 class Round(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
         return round(a)
@@ -77,6 +81,7 @@ class Is(Expression[bool, None]):
     Idiv,
     Mod,
     Pow,
+    Abs,
     Round,
     Min,
     Max,
