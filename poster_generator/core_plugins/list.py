@@ -1,5 +1,5 @@
-from sys import maxsize
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
+from sys import maxsize
 from typing import Any, Callable, Iterable, List as TList, Optional
 
 class Append(Expression[None, None]):
