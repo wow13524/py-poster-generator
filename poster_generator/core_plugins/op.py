@@ -1,5 +1,5 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any
+from typing import Any, Tuple
 
 class Add(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
@@ -16,6 +16,10 @@ class Mul(Expression[Any, None]):
 class Div(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
         return a / b
+
+class Divmod(Expression[Tuple[Any, Any], None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Tuple[Any, Any]:
+        return divmod(a, b)
     
 class Idiv(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
@@ -78,6 +82,7 @@ class Is(Expression[bool, None]):
     Sub,
     Mul,
     Div,
+    Divmod,
     Idiv,
     Mod,
     Pow,
