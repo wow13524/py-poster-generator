@@ -48,6 +48,10 @@ class Min(Expression[Any, None]):
 class Max(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
         return max(a)
+    
+class Bin(Expression[str, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
+        return bin(a)
 
 class Gt(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
@@ -90,6 +94,7 @@ class Is(Expression[bool, None]):
     Round,
     Min,
     Max,
+    Bin,
     Gt,
     Gte,
     Lt,
