@@ -61,6 +61,10 @@ class Ord(Expression[int, None]):
     def evaluate(self, *, context: None, a: Union[str, bytes, bytearray]=REQUIRED) -> int:
         return ord(a)
 
+class Hash(Expression[int, None]):
+    def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
+        return hash(a)
+
 class Gt(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
         return a > b
@@ -105,6 +109,7 @@ class Is(Expression[bool, None]):
     Bin,
     Chr,
     Ord,
+    Hash,
     Gt,
     Gte,
     Lt,
