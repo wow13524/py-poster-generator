@@ -1,5 +1,5 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any, Tuple, Union
+from typing import Any, Sized, Tuple, Union
 
 class Add(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
@@ -40,6 +40,11 @@ class Abs(Expression[Any, None]):
 class Round(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
         return round(a)
+
+class Len(Expression[int, None]):
+    def evaluate(self, *, context: None, a: Sized=REQUIRED) -> int:
+        return len(a)
+    
     
 class Min(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
@@ -104,6 +109,7 @@ class Is(Expression[bool, None]):
     Pow,
     Abs,
     Round,
+    Len,
     Min,
     Max,
     Bin,
