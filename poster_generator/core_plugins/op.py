@@ -57,6 +57,10 @@ class Max(Expression[Any, None]):
 class Bin(Expression[str, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
         return bin(a)
+
+class Oct(Expression[str, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
+        return oct(a)
     
 class Chr(Expression[str, None]):
     def evaluate(self, *, context: None, a: int=REQUIRED) -> str:
@@ -113,6 +117,7 @@ class Is(Expression[bool, None]):
     Min,
     Max,
     Bin,
+    Oct,
     Chr,
     Ord,
     Hash,
