@@ -101,6 +101,10 @@ class Neq(Expression[bool, None]):
 class Is(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
         return a is b
+    
+class Callable(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> bool:
+        return callable(a)
 
 @expression(
     Add,
@@ -127,7 +131,8 @@ class Is(Expression[bool, None]):
     Lte,
     Eq,
     Neq,
-    Is
+    Is,
+    Callable
 )
 class Op(Plugin[None]):
     def new_context(self) -> None:
