@@ -61,6 +61,10 @@ class Bin(Expression[str, None]):
 class Oct(Expression[str, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
         return oct(a)
+
+class Hex(Expression[str, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
+        return hex(a)
     
 class Chr(Expression[str, None]):
     def evaluate(self, *, context: None, a: int=REQUIRED) -> str:
@@ -122,6 +126,7 @@ class Callable(Expression[bool, None]):
     Max,
     Bin,
     Oct,
+    Hex,
     Chr,
     Ord,
     Hash,
