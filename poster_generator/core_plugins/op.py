@@ -53,7 +53,11 @@ class Min(Expression[Any, None]):
 class Max(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
         return max(a)
-    
+
+class Ascii(Expression[str, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
+        return ascii(a)
+
 class Bin(Expression[str, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
         return bin(a)
@@ -124,6 +128,7 @@ class Callable(Expression[bool, None]):
     Len,
     Min,
     Max,
+    Ascii,
     Bin,
     Oct,
     Hex,
