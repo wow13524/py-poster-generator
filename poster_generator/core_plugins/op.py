@@ -82,6 +82,10 @@ class Hash(Expression[int, None]):
     def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
         return hash(a)
 
+class Id(Expression[int, None]):
+    def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
+        return id(a)
+
 class Gt(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
         return a > b
@@ -135,6 +139,7 @@ class Callable(Expression[bool, None]):
     Chr,
     Ord,
     Hash,
+    Id,
     Gt,
     Gte,
     Lt,
