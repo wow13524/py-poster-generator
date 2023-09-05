@@ -118,6 +118,10 @@ class Callable(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> bool:
         return callable(a)
 
+class Type(Expression[type, None]):
+    def evaluate(self, *, context: None, a: Any=REQUIRED) -> type:
+        return type(a)
+
 @expression(
     Add,
     Sub,
@@ -147,7 +151,8 @@ class Callable(Expression[bool, None]):
     Eq,
     Neq,
     Is,
-    Callable
+    Callable,
+    Type
 )
 class Op(Plugin[None]):
     def new_context(self) -> None:
