@@ -81,6 +81,10 @@ class Ord(Expression[int, None]):
 class Hash(Expression[int, None]):
     def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
         return hash(a)
+    
+class Repr(Expression[str, None]):
+    def evaluate(self, *, context: None, a: object=REQUIRED) -> str:
+        return repr(a)
 
 class Id(Expression[int, None]):
     def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
@@ -143,6 +147,7 @@ class Type(Expression[type, None]):
     Chr,
     Ord,
     Hash,
+    Repr,
     Id,
     Gt,
     Gte,
