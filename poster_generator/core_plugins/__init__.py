@@ -1,5 +1,6 @@
 #pyright: reportUnusedImport=false
 from .args import Args
+from .bool import Bool
 from .data import Data
 from .dict import Dict
 from .list import List
