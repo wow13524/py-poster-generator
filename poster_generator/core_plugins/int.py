@@ -22,9 +22,9 @@ class Conjugate(Expression[int, None]):
     def evaluate(self, *, context: None, i: int=REQUIRED) -> int:
         return i.conjugate()
 
-class FromBytes(Expression[bool, None]):
-    def evaluate(self, *, context: None, bytes: Union[Iterable[SupportsIndex], SupportsBytes, Buffer]=REQUIRED, byteorder: Literal["little", "big"]="big", signed: bool=False) -> bool:
-        return bool.from_bytes(bytes, byteorder, signed=signed)
+class FromBytes(Expression[int, None]):
+    def evaluate(self, *, context: None, bytes: Union[Iterable[SupportsIndex], SupportsBytes, Buffer]=REQUIRED, byteorder: Literal["little", "big"]="big", signed: bool=False) -> int:
+        return int.from_bytes(bytes, byteorder, signed=signed)
 
 class ToBytes(Expression[bytes, None]):
     def evaluate(self, *, context: None, i: int=REQUIRED, length: SupportsIndex=1, byteorder: Literal["little", "big"]="big", signed: bool=False) -> bytes:
