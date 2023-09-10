@@ -1,7 +1,7 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
 from typing import Any
 
-class Construct(Expression[float, Any]):
+class New(Expression[float, Any]):
     def evaluate(self, *, context: Any, object: Any=REQUIRED) -> float:
         return float(object)
 
@@ -26,7 +26,7 @@ class IsInteger(Expression[bool, None]):
         return f.is_integer()
 
 @expression(
-    Construct,
+    New,
     AsIntegerRatio,
     Conjugate,
     FromHex,

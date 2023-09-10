@@ -2,7 +2,7 @@ from typing_extensions import Buffer
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
 from typing import Any, Iterable, Literal, SupportsBytes, SupportsIndex, Union
 
-class Construct(Expression[bool, Any]):
+class New(Expression[bool, Any]):
     def evaluate(self, *, context: Any, object: Any=REQUIRED) -> bool:
         return bool(object)
 
@@ -31,7 +31,7 @@ class ToBytes(Expression[bytes, None]):
         return b.to_bytes(length, byteorder, signed=signed)
 
 @expression(
-    Construct,
+    New,
     AsIntegerRatio,
     BitCount,
     BitLength,

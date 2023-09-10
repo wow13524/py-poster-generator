@@ -2,7 +2,7 @@ from poster_generator.api import Expression, Plugin, REQUIRED, expression
 from sys import maxsize
 from typing import Any, Iterable
 
-class Construct(Expression[tuple[Any, ...], Any]):
+class New(Expression[tuple[Any, ...], Any]):
     def evaluate(self, *, context: Any, args: Iterable[Any]=REQUIRED) -> tuple[Any, ...]:
         return tuple(args)
 
@@ -15,7 +15,7 @@ class Index(Expression[int, None]):
         return t.index(value, start, stop)
 
 @expression(
-    Construct,
+    New,
     Count,
     Index
 )

@@ -3,7 +3,7 @@ from typing import Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 
 T = TypeVar("T")
 
-class Construct(Expression[str, None]):
+class New(Expression[str, None]):
     def evaluate(self, *, context: None, object: object="") -> str:
         return str(object)
 
@@ -200,7 +200,7 @@ class Zfill(Expression[str, None]):
         return s.zfill(width)
 
 @expression(
-    Construct,
+    New,
     Capitalize,
     Casefold,
     Center,

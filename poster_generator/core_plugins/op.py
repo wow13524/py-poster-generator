@@ -45,7 +45,6 @@ class Len(Expression[int, None]):
     def evaluate(self, *, context: None, a: Sized=REQUIRED) -> int:
         return len(a)
     
-    
 class Min(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
         return min(a)
