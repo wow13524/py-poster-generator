@@ -1,6 +1,10 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
 from typing import Any, Dict as TDict, ItemsView, Iterable, KeysView, Optional, Tuple, ValuesView
 
+class New(Expression[TDict[Any, Any], Any]):
+    def evaluate(self, *, context: Any, args: Optional[Iterable[tuple[Any, Any]]]=None, kwargs: Optional[TDict[str, Any]]=None) -> TDict[Any, Any]:
+        return dict(*args or [], **kwargs or {})
+
 class Clear(Expression[None, None]):
     def evaluate(self, *, context: None, d: TDict[Any, Any]=REQUIRED) -> None:
         d.clear()
@@ -46,6 +50,7 @@ class Values(Expression[ValuesView[Any], None]):
         return d.values()
 
 @expression(
+    New,
     Clear,
     Copy,
     Fromkeys,
