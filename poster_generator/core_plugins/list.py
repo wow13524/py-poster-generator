@@ -2,6 +2,10 @@ from poster_generator.api import Expression, Plugin, REQUIRED, expression
 from sys import maxsize
 from typing import Any, Callable, Iterable, List as TList, Optional
 
+class New(Expression[TList[Any], None]):
+    def evaluate(self, *, context: None, iterable: Optional[Iterable[Any]]=None) -> TList[Any]:
+        return list(iterable) if iterable else list()
+
 class Append(Expression[None, None]):
     def evaluate(self, *, context: None, l: TList[Any]=REQUIRED, value: Any=REQUIRED) -> None:
         l.append(value)
@@ -47,6 +51,7 @@ class Sort(Expression[None, None]):
         l.sort(key=key, reverse=reverse)
 
 @expression(
+    New,
     Append,
     Clear,
     Copy,
