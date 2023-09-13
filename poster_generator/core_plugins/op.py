@@ -10,8 +10,8 @@ class Sub(Expression[TAny, None]):
         return x - y
 
 class Mul(Expression[TAny, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
-        return a * b
+    def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> TAny:
+        return x * y
 
 class Div(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
