@@ -1,5 +1,9 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any, Iterable, Set as TSet
+from typing import Any, Iterable, Optional, Set as TSet
+
+class New(Expression[TSet[Any], None]):
+    def evaluate(self, *, context: None, iterable: Optional[Iterable[Any]]=None) -> TSet[Any]:
+        return set(iterable) if iterable else set()
 
 class Add(Expression[None, None]):
     def evaluate(self, *, context: None, s: TSet[Any]=REQUIRED, element: Any=REQUIRED) -> None:
@@ -70,6 +74,7 @@ class Update(Expression[None, None]):
         s.update(*t)
 
 @expression(
+    New,
     Add,
     Clear,
     Copy,
