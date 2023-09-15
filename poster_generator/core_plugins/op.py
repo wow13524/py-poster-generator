@@ -1,5 +1,5 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any, Sized, Tuple, Union
+from typing import Any, Iterable, Iterator, Sized, Tuple, Union
 
 class Add(Expression[Any, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
@@ -125,6 +125,14 @@ class Type(Expression[type, None]):
     def evaluate(self, *, context: None, a: Any=REQUIRED) -> type:
         return type(a)
 
+class Sum(Expression[Any, None]):
+    def evaluate(self, *, context: None, a: Iterable[Any]=REQUIRED, start: Any=0) -> Any:
+        return sum(a, start=start)
+
+class Zip(Expression[Iterator[tuple[Any, Any]], None]):
+    def evaluate(self, *, context: None, a: Iterator[Any]=REQUIRED, b: Iterator[Any]=REQUIRED, strict: bool=False) -> Iterator[tuple[Any, Any]]:
+        return zip(a, b, strict=strict)
+
 @expression(
     Add,
     Sub,
@@ -156,7 +164,9 @@ class Type(Expression[type, None]):
     Neq,
     Is,
     Callable,
-    Type
+    Type,
+    Sum,
+    Zip
 )
 class Op(Plugin[None]):
     def new_context(self) -> None:
