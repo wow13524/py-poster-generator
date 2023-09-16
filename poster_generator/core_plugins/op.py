@@ -1,72 +1,80 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any, Iterable, Iterator, Sized, Tuple, Union
+from typing import Any as TAny, Iterable, Iterator, Sized, Tuple, Union
 
-class Add(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
+class Add(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
         return a + b
 
-class Sub(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
+class Sub(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
         return a - b
 
-class Mul(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
+class Mul(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
         return a * b
 
-class Div(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
+class Div(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
         return a / b
 
-class Divmod(Expression[Tuple[Any, Any], None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Tuple[Any, Any]:
+class Divmod(Expression[Tuple[TAny, TAny], None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> Tuple[TAny, TAny]:
         return divmod(a, b)
     
-class Idiv(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
+class Idiv(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
         return a // b
 
-class Mod(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
+class Mod(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
         return a % b
 
-class Pow(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> Any:
+class Pow(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
         return a ** b
 
-class Abs(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
+class Abs(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
         return abs(a)
 
-class Round(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
+class All(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED) -> bool:
+        return all(a)
+
+class Any(Expression[bool, None]):
+    def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED) -> bool:
+        return any(a)
+
+class Round(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
         return round(a)
 
 class Len(Expression[int, None]):
     def evaluate(self, *, context: None, a: Sized=REQUIRED) -> int:
         return len(a)
     
-class Min(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
+class Min(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
         return min(a)
     
-class Max(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> Any:
+class Max(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
         return max(a)
 
 class Ascii(Expression[str, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
         return ascii(a)
 
 class Bin(Expression[str, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
         return bin(a)
 
 class Oct(Expression[str, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
         return oct(a)
 
 class Hex(Expression[str, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> str:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
         return hex(a)
     
 class Chr(Expression[str, None]):
@@ -90,47 +98,47 @@ class Id(Expression[int, None]):
         return id(a)
 
 class Gt(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
         return a > b
 
 class Gte(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
         return a >= b
 
 class Lt(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
         return a < b
 
 class Lte(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
         return a <= b
 
 class Eq(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
         return a == b
 
 class Neq(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
         return a != b
 
 class Is(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED, b: Any=REQUIRED) -> bool:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
         return a is b
     
 class Callable(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> bool:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> bool:
         return callable(a)
 
 class Type(Expression[type, None]):
-    def evaluate(self, *, context: None, a: Any=REQUIRED) -> type:
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> type:
         return type(a)
 
-class Sum(Expression[Any, None]):
-    def evaluate(self, *, context: None, a: Iterable[Any]=REQUIRED, start: Any=0) -> Any:
+class Sum(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, start: TAny=0) -> TAny:
         return sum(a, start=start)
 
-class Zip(Expression[Iterator[tuple[Any, Any]], None]):
-    def evaluate(self, *, context: None, a: Iterator[Any]=REQUIRED, b: Iterator[Any]=REQUIRED, strict: bool=False) -> Iterator[tuple[Any, Any]]:
+class Zip(Expression[Iterator[tuple[TAny, TAny]], None]):
+    def evaluate(self, *, context: None, a: Iterator[TAny]=REQUIRED, b: Iterator[TAny]=REQUIRED, strict: bool=False) -> Iterator[tuple[TAny, TAny]]:
         return zip(a, b, strict=strict)
 
 @expression(
@@ -143,6 +151,8 @@ class Zip(Expression[Iterator[tuple[Any, Any]], None]):
     Mod,
     Pow,
     Abs,
+    All,
+    Any,
     Round,
     Len,
     Min,
