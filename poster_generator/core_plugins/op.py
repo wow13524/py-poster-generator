@@ -137,6 +137,10 @@ class Sum(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, start: TAny=0) -> TAny:
         return sum(a, start=start)
 
+class Enumerate(Expression[Iterator[tuple[int, TAny]], None]):
+    def evaluate(self, *, context: None, a: Iterator[TAny]=REQUIRED, start: int=0) -> Iterator[tuple[int, TAny]]:
+        return enumerate(a, start)
+
 class Zip(Expression[Iterator[tuple[TAny, TAny]], None]):
     def evaluate(self, *, context: None, a: Iterator[TAny]=REQUIRED, b: Iterator[TAny]=REQUIRED, strict: bool=False) -> Iterator[tuple[TAny, TAny]]:
         return zip(a, b, strict=strict)
@@ -176,6 +180,7 @@ class Zip(Expression[Iterator[tuple[TAny, TAny]], None]):
     Callable,
     Type,
     Sum,
+    Enumerate,
     Zip
 )
 class Op(Plugin[None]):
