@@ -1,5 +1,5 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any as TAny, Iterable, Iterator, Sized, Tuple, Union
+from typing import Any as TAny, Iterable, Iterator, List, Optional, Sized, Tuple, Union
 
 class Add(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
@@ -144,6 +144,10 @@ class Enumerate(Expression[Iterator[tuple[int, TAny]], None]):
 class Zip(Expression[Iterator[tuple[TAny, TAny]], None]):
     def evaluate(self, *, context: None, a: Iterator[TAny]=REQUIRED, b: Iterator[TAny]=REQUIRED, strict: bool=False) -> Iterator[tuple[TAny, TAny]]:
         return zip(a, b, strict=strict)
+
+class Print(Expression[None, None]):
+    def evaluate(self, *, context: None, a: List[Any]=[], sep: Optional[str]=" ", end: Optional[str]="\n") -> None:
+        return print(*a, sep=sep, end=end)
 
 @expression(
     Add,
