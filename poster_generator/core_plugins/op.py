@@ -146,12 +146,16 @@ class Zip(Expression[Iterator[tuple[TAny, TAny]], None]):
         return zip(a, b, strict=strict)
 
 class Print(Expression[None, None]):
-    def evaluate(self, *, context: None, a: List[Any]=[], sep: Optional[str]=" ", end: Optional[str]="\n") -> None:
+    def evaluate(self, *, context: None, a: List[TAny]=[], sep: Optional[str]=" ", end: Optional[str]="\n") -> None:
         return print(*a, sep=sep, end=end)
 
 class Reversed(Expression[None, None]):
-    def evaluate(self, *, context: None, a: Reversible[Any]=REQUIRED) -> None:
+    def evaluate(self, *, context: None, a: Reversible[TAny]=REQUIRED) -> None:
         reversed(a)
+
+class Sorted(Expression[None, None]):
+    def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, key: TAny=None, reverse: bool=False) -> None:
+        sorted(a)
 
 @expression(
     Add,
@@ -191,7 +195,8 @@ class Reversed(Expression[None, None]):
     Enumerate,
     Zip,
     Print,
-    Reversed
+    Reversed,
+    Sorted
 )
 class Op(Plugin[None]):
     def new_context(self) -> None:
