@@ -1,5 +1,5 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any as TAny, Iterable, Iterator, List, Optional, Reversible, Sized, Tuple, Union
+from typing import Any as TAny, Iterable, Iterator, List, Optional, Reversible, Sized, SupportsIndex, Tuple, Union
 
 class Add(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
@@ -157,6 +157,10 @@ class Sorted(Expression[None, None]):
     def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, key: TAny=None, reverse: bool=False) -> None:
         sorted(a)
 
+class Range(Expression[range, None]):
+    def evaluate(self, *, context: None, start: SupportsIndex=0, stop: SupportsIndex=REQUIRED, step: SupportsIndex=1) -> range:
+        return range(start, stop, step)
+
 @expression(
     Add,
     Sub,
@@ -196,7 +200,8 @@ class Sorted(Expression[None, None]):
     Zip,
     Print,
     Reversed,
-    Sorted
+    Sorted,
+    Range
 )
 class Op(Plugin[None]):
     def new_context(self) -> None:
