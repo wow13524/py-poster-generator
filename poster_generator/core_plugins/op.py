@@ -129,10 +129,6 @@ class Callable(Expression[bool, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> bool:
         return callable(a)
 
-class Type(Expression[type, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> type:
-        return type(a)
-
 class Sum(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, start: TAny=0) -> TAny:
         return sum(a, start=start)
@@ -198,7 +194,6 @@ class Type(Expression[type, None]):
     Neq,
     Is,
     Callable,
-    Type,
     Sum,
     Enumerate,
     Zip,
