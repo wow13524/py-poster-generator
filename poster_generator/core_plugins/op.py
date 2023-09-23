@@ -161,6 +161,10 @@ class Range(Expression[range, None]):
     def evaluate(self, *, context: None, start: SupportsIndex=0, stop: SupportsIndex=REQUIRED, step: SupportsIndex=1) -> range:
         return range(start, stop, step)
 
+class Type(Expression[type, None]):
+    def evaluate(self, *, context: None, a: object=REQUIRED) -> type:
+        return type(a)
+
 @expression(
     Add,
     Sub,
@@ -201,7 +205,8 @@ class Range(Expression[range, None]):
     Print,
     Reversed,
     Sorted,
-    Range
+    Range,
+    Type
 )
 class Op(Plugin[None]):
     def new_context(self) -> None:
