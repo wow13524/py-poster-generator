@@ -1,5 +1,5 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any as TAny, Iterable, Iterator, List, Optional, Reversible, Sized, SupportsIndex, Tuple, Union
+from typing import Any as TAny, Iterable, Iterator, List, Optional, Reversible, Sized, SupportsIndex, Tuple, Union, cast
 
 class Add(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
@@ -161,6 +161,10 @@ class Type(Expression[type, None]):
     def evaluate(self, *, context: None, a: object=REQUIRED) -> type:
         return type(a)
 
+class Next(Expression[TAny, None]):
+    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
+        return next(a)
+
 @expression(
     Add,
     Sub,
@@ -201,7 +205,8 @@ class Type(Expression[type, None]):
     Reversed,
     Sorted,
     Range,
-    Type
+    Type,
+    Next
 )
 class Op(Plugin[None]):
     def new_context(self) -> None:
