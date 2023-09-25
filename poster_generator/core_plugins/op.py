@@ -1,5 +1,5 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any as TAny, Iterable, Iterator, List, Optional, Reversible, Sized, SupportsIndex, Tuple, Union, cast
+from typing import Any as TAny, Iterable, Iterator, List, Optional, Reversible, Sized, SupportsIndex, Tuple, Union
 
 class Add(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
