@@ -165,6 +165,10 @@ class Next(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
         return next(a)
 
+class Input(Expression[str, None]):
+    def evaluate(self, *, context: None, a: object="") -> str:
+        return input(a)
+
 @expression(
     Add,
     Sub,
@@ -206,7 +210,8 @@ class Next(Expression[TAny, None]):
     Sorted,
     Range,
     Type,
-    Next
+    Next,
+    Input
 )
 class Op(Plugin[None]):
     def new_context(self) -> None:
