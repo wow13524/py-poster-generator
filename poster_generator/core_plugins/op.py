@@ -14,8 +14,8 @@ class Mul(Expression[TAny, None]):
         return x * y
 
 class Div(Expression[TAny, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
-        return a / b
+    def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> TAny:
+        return x / y
 
 class Divmod(Expression[Tuple[TAny, TAny], None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> Tuple[TAny, TAny]:
