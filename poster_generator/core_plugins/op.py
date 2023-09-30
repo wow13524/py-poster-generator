@@ -18,8 +18,8 @@ class Div(Expression[TAny, None]):
         return x / y
 
 class Divmod(Expression[Tuple[TAny, TAny], None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> Tuple[TAny, TAny]:
-        return divmod(a, b)
+    def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> Tuple[TAny, TAny]:
+        return divmod(x, y)
     
 class Idiv(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
