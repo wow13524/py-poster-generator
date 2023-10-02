@@ -26,8 +26,8 @@ class Idiv(Expression[TAny, None]):
         return x // y
 
 class Mod(Expression[TAny, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
-        return a % b
+    def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> TAny:
+        return x % y
 
 class Pow(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> TAny:
