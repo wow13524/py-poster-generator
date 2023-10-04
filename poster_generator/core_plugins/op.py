@@ -34,8 +34,8 @@ class Pow(Expression[TAny, None]):
         return x ** y
 
 class Abs(Expression[TAny, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
-        return abs(a)
+    def evaluate(self, *, context: None, x: TAny=REQUIRED) -> TAny:
+        return abs(x)
 
 class All(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED) -> bool:
