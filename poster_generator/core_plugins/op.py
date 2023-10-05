@@ -38,8 +38,8 @@ class Abs(Expression[TAny, None]):
         return abs(x)
 
 class All(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED) -> bool:
-        return all(a)
+    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED) -> bool:
+        return all(iterable)
 
 class Any(Expression[bool, None]):
     def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED) -> bool:
