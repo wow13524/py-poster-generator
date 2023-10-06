@@ -42,8 +42,8 @@ class All(Expression[bool, None]):
         return all(iterable)
 
 class Any(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED) -> bool:
-        return any(a)
+    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED) -> bool:
+        return any(iterable)
 
 class Round(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
