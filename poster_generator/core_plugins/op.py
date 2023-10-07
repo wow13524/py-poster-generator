@@ -50,8 +50,8 @@ class Round(Expression[TAny, None]):
         return round(a)
 
 class Len(Expression[int, None]):
-    def evaluate(self, *, context: None, a: Sized=REQUIRED) -> int:
-        return len(a)
+    def evaluate(self, *, context: None, obj: Sized=REQUIRED) -> int:
+        return len(obj)
     
 class Min(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
