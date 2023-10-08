@@ -54,8 +54,8 @@ class Len(Expression[int, None]):
         return len(obj)
     
 class Min(Expression[TAny, None]):
-    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED, key: Optional[TCallable[[TAny], object]]=None) -> TAny:
-        return min(iterable)
+    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED, key: Optional[TCallable[[TAny], TAny]]=None) -> TAny:
+        return min(iterable, key=key)
     
 class Max(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
