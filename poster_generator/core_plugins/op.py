@@ -1,5 +1,5 @@
 from poster_generator.api import Expression, Plugin, REQUIRED, expression
-from typing import Any as TAny, Callable, Iterable, Iterator, List, Optional, Reversible, Sized, SupportsIndex, Tuple, Union
+from typing import Any as TAny, Callable as TCallable, Iterable, Iterator, List, Optional, Reversible, Sized, SupportsIndex, Tuple, Union
 
 class Add(Expression[TAny, None]):
     def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> TAny:
@@ -54,7 +54,7 @@ class Len(Expression[int, None]):
         return len(obj)
     
 class Min(Expression[TAny, None]):
-    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED, key: Optional[Callable]=None) -> TAny:
+    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED, key: Optional[TCallable[[TAny], object]]=None) -> TAny:
         return min(iterable)
     
 class Max(Expression[TAny, None]):
