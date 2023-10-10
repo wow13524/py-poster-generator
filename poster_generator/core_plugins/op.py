@@ -58,8 +58,8 @@ class Min(Expression[TAny, None]):
         return min(iterable, key=key)
     
 class Max(Expression[TAny, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
-        return max(a)
+    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED, key: Optional[TCallable[[TAny], TAny]]=None) -> TAny:
+        return max(iterable, key=key)
 
 class Ascii(Expression[str, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
