@@ -62,8 +62,8 @@ class Max(Expression[TAny, None]):
         return max(iterable, key=key)
 
 class Ascii(Expression[str, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
-        return ascii(a)
+    def evaluate(self, *, context: None, obj: TAny=REQUIRED) -> str:
+        return ascii(obj)
 
 class Bin(Expression[str, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
