@@ -66,8 +66,8 @@ class Ascii(Expression[str, None]):
         return ascii(obj)
 
 class Bin(Expression[str, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
-        return bin(a)
+    def evaluate(self, *, context: None, number: Union[int, SupportsIndex]=REQUIRED) -> str:
+        return bin(number)
 
 class Oct(Expression[str, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
