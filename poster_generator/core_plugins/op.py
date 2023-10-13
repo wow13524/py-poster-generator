@@ -70,8 +70,8 @@ class Bin(Expression[str, None]):
         return bin(number)
 
 class Oct(Expression[str, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
-        return oct(a)
+    def evaluate(self, *, context: None, number: Union[int, SupportsIndex]=REQUIRED) -> str:
+        return oct(number)
 
 class Hex(Expression[str, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
