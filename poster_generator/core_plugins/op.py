@@ -74,8 +74,8 @@ class Oct(Expression[str, None]):
         return oct(number)
 
 class Hex(Expression[str, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> str:
-        return hex(a)
+    def evaluate(self, *, context: None, number: Union[int, SupportsIndex]=REQUIRED) -> str:
+        return hex(number)
     
 class Chr(Expression[str, None]):
     def evaluate(self, *, context: None, a: int=REQUIRED) -> str:
