@@ -78,8 +78,8 @@ class Hex(Expression[str, None]):
         return hex(number)
     
 class Chr(Expression[str, None]):
-    def evaluate(self, *, context: None, a: int=REQUIRED) -> str:
-        return chr(a)
+    def evaluate(self, *, context: None, i: int=REQUIRED) -> str:
+        return chr(i)
 
 class Ord(Expression[int, None]):
     def evaluate(self, *, context: None, a: Union[str, bytes, bytearray]=REQUIRED) -> int:
