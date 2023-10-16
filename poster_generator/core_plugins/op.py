@@ -82,8 +82,8 @@ class Chr(Expression[str, None]):
         return chr(i)
 
 class Ord(Expression[int, None]):
-    def evaluate(self, *, context: None, a: Union[str, bytes, bytearray]=REQUIRED) -> int:
-        return ord(a)
+    def evaluate(self, *, context: None, c: Union[str, bytes, bytearray]=REQUIRED) -> int:
+        return ord(c)
 
 class Hash(Expression[int, None]):
     def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
