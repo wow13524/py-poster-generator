@@ -86,8 +86,8 @@ class Ord(Expression[int, None]):
         return ord(c)
 
 class Hash(Expression[int, None]):
-    def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
-        return hash(a)
+    def evaluate(self, *, context: None, obj: object=REQUIRED) -> int:
+        return hash(obj)
     
 class Repr(Expression[str, None]):
     def evaluate(self, *, context: None, a: object=REQUIRED) -> str:
