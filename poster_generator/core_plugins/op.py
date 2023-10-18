@@ -90,8 +90,8 @@ class Hash(Expression[int, None]):
         return hash(obj)
     
 class Repr(Expression[str, None]):
-    def evaluate(self, *, context: None, a: object=REQUIRED) -> str:
-        return repr(a)
+    def evaluate(self, *, context: None, obj: object=REQUIRED) -> str:
+        return repr(obj)
 
 class Id(Expression[int, None]):
     def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
