@@ -94,8 +94,8 @@ class Repr(Expression[str, None]):
         return repr(obj)
 
 class Id(Expression[int, None]):
-    def evaluate(self, *, context: None, a: object=REQUIRED) -> int:
-        return id(a)
+    def evaluate(self, *, context: None, obj: object=REQUIRED) -> int:
+        return id(obj)
 
 class Gt(Expression[bool, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
