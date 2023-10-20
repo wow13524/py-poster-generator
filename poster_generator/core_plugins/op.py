@@ -98,8 +98,8 @@ class Id(Expression[int, None]):
         return id(obj)
 
 class Gt(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
-        return a > b
+    def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> bool:
+        return x > y
 
 class Gte(Expression[bool, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
