@@ -106,8 +106,8 @@ class Gte(Expression[bool, None]):
         return x >= y
 
 class Lt(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
-        return a < b
+    def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> bool:
+        return x < y
 
 class Lte(Expression[bool, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
