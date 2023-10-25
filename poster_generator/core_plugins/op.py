@@ -118,8 +118,8 @@ class Eq(Expression[bool, None]):
         return x == y
 
 class Neq(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
-        return a != b
+    def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> bool:
+        return x != y
 
 class Is(Expression[bool, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
