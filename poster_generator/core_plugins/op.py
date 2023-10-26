@@ -122,8 +122,8 @@ class Neq(Expression[bool, None]):
         return x != y
 
 class Is(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED, b: TAny=REQUIRED) -> bool:
-        return a is b
+    def evaluate(self, *, context: None, x: TAny=REQUIRED, y: TAny=REQUIRED) -> bool:
+        return x is y
     
 class Callable(Expression[bool, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> bool:
