@@ -126,8 +126,8 @@ class Is(Expression[bool, None]):
         return x is y
     
 class Callable(Expression[bool, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> bool:
-        return callable(a)
+    def evaluate(self, *, context: None, obj: TAny=REQUIRED) -> bool:
+        return callable(obj)
 
 class Sum(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, start: TAny=0) -> TAny:
