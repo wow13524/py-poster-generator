@@ -130,8 +130,8 @@ class Callable(Expression[bool, None]):
         return callable(obj)
 
 class Sum(Expression[TAny, None]):
-    def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, start: TAny=0) -> TAny:
-        return sum(a, start=start)
+    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED, start: TAny=0) -> TAny:
+        return sum(iterable, start=start)
 
 class Enumerate(Expression[Iterator[tuple[int, TAny]], None]):
     def evaluate(self, *, context: None, a: Iterator[TAny]=REQUIRED, start: int=0) -> Iterator[tuple[int, TAny]]:
