@@ -134,8 +134,8 @@ class Sum(Expression[TAny, None]):
         return sum(iterable, start=start)
 
 class Enumerate(Expression[Iterator[tuple[int, TAny]], None]):
-    def evaluate(self, *, context: None, a: Iterator[TAny]=REQUIRED, start: int=0) -> Iterator[tuple[int, TAny]]:
-        return enumerate(a, start)
+    def evaluate(self, *, context: None, iterable: Iterator[TAny]=REQUIRED, start: int=0) -> Iterator[tuple[int, TAny]]:
+        return enumerate(iterable, start)
 
 class Zip(Expression[Iterator[tuple[TAny, TAny]], None]):
     def evaluate(self, *, context: None, a: Iterator[TAny]=REQUIRED, b: Iterator[TAny]=REQUIRED, strict: bool=False) -> Iterator[tuple[TAny, TAny]]:
