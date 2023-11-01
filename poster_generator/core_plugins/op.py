@@ -162,8 +162,8 @@ class Type(Expression[type, None]):
         return type(o)
 
 class Next(Expression[TAny, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
-        return next(a)
+    def evaluate(self, *, context: None, i: TAny=REQUIRED) -> TAny:
+        return next(i)
 
 class Input(Expression[str, None]):
     def evaluate(self, *, context: None, a: object="") -> str:
