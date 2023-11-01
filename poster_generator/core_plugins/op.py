@@ -158,8 +158,8 @@ class Range(Expression[range, None]):
         return range(start, stop, step)
 
 class Type(Expression[type, None]):
-    def evaluate(self, *, context: None, a: object=REQUIRED) -> type:
-        return type(a)
+    def evaluate(self, *, context: None, o: object=REQUIRED) -> type:
+        return type(o)
 
 class Next(Expression[TAny, None]):
     def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
