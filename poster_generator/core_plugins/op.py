@@ -166,8 +166,8 @@ class Next(Expression[TAny, None]):
         return next(i)
 
 class Input(Expression[str, None]):
-    def evaluate(self, *, context: None, a: object="") -> str:
-        return input(a)
+    def evaluate(self, *, context: None, prompt: object="") -> str:
+        return input(prompt)
 
 @expression(
     Add,
