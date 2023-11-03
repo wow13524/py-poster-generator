@@ -146,8 +146,8 @@ class Print(Expression[None, None]):
         return print(*values, sep=sep, end=end)
 
 class Reversed(Expression[None, None]):
-    def evaluate(self, *, context: None, a: Reversible[TAny]=REQUIRED) -> None:
-        reversed(a)
+    def evaluate(self, *, context: None, sequence: Reversible[TAny]=REQUIRED) -> None:
+        reversed(sequence)
 
 class Sorted(Expression[None, None]):
     def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, key: TAny=None, reverse: bool=False) -> None:
