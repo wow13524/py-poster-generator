@@ -150,8 +150,8 @@ class Reversed(Expression[None, None]):
         reversed(sequence)
 
 class Sorted(Expression[None, None]):
-    def evaluate(self, *, context: None, a: Iterable[TAny]=REQUIRED, key: TAny=None, reverse: bool=False) -> None:
-        sorted(a)
+    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED, key: TAny=None, reverse: bool=False) -> None:
+        sorted(iterable)
 
 class Range(Expression[range, None]):
     def evaluate(self, *, context: None, start: SupportsIndex=0, stop: SupportsIndex=REQUIRED, step: SupportsIndex=1) -> range:
