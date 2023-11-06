@@ -138,8 +138,8 @@ class Enumerate(Expression[Iterator[tuple[int, TAny]], None]):
         return enumerate(iterable, start)
 
 class Zip(Expression[Iterator[tuple[TAny, TAny]], None]):
-    def evaluate(self, *, context: None, iter1: Iterator[TAny]=REQUIRED, iter2: Iterator[TAny]=REQUIRED, strict: bool=False) -> Iterator[tuple[TAny, TAny]]:
-        return zip(iter1, iter2, strict=strict)
+    def evaluate(self, *, context: None, args: List[Iterable[TAny]]=REQUIRED) -> Iterator[tuple[TAny, TAny]]:
+        return zip(*args)
 
 class Print(Expression[None, None]):
     def evaluate(self, *, context: None, values: List[TAny]=[], sep: Optional[str]=" ", end: Optional[str]="\n") -> None:
