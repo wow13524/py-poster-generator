@@ -142,8 +142,8 @@ class Zip(Expression[Iterator[tuple[TAny, TAny]], None]):
         return zip(*args)
 
 class Print(Expression[None, None]):
-    def evaluate(self, *, context: None, values: List[TAny]=[], sep: Optional[str]=" ", end: Optional[str]="\n") -> None:
-        return print(*values, sep=sep, end=end)
+    def evaluate(self, *, context: None, values: List[TAny]=[], sep: Optional[str]=" ", end: Optional[str]="\n", flush: bool=False) -> None:
+        return print(*values, sep=sep, end=end, flush=flush)
 
 class Reversed(Expression[None, None]):
     def evaluate(self, *, context: None, sequence: Reversible[TAny]=REQUIRED) -> None:
