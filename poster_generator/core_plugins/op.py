@@ -46,8 +46,8 @@ class Any(Expression[bool, None]):
         return any(iterable)
 
 class Round(Expression[TAny, None]):
-    def evaluate(self, *, context: None, a: TAny=REQUIRED) -> TAny:
-        return round(a)
+    def evaluate(self, *, context: None, a: TAny=REQUIRED, ndigits: Optional[int]=None) -> TAny:
+        return round(a, ndigits=ndigits)
 
 class Len(Expression[int, None]):
     def evaluate(self, *, context: None, obj: Sized=REQUIRED) -> int:
