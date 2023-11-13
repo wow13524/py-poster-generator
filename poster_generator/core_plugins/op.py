@@ -63,8 +63,13 @@ class Min(Expression[TAny, None]):
             raise Exception()
     
 class Max(Expression[TAny, None]):
-    def evaluate(self, *, context: None, iterable: Iterable[TAny]=REQUIRED, key: Optional[TCallable[[TAny], TAny]]=None) -> TAny:
-        return max(iterable, key=key)
+    def evaluate(self, *, context: None, iterable: Optional[Iterable[TAny]]=None, args: Optional[List[TAny]]=None, key: Optional[TCallable[[TAny], TAny]]=None) -> TAny:
+        if iterable:
+            return max(iterable, key=key)
+        elif args:
+            return max(*args, key=key)
+        else:
+            raise Exception()
 
 class Ascii(Expression[str, None]):
     def evaluate(self, *, context: None, obj: TAny=REQUIRED) -> str:
