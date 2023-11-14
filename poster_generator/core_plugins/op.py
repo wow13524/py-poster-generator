@@ -60,7 +60,7 @@ class Min(Expression[TAny, None]):
         elif args:
             return min(*args, key=key)
         else:
-            raise Exception()
+            raise Exception("Op.Min used without iterable or args")
     
 class Max(Expression[TAny, None]):
     def evaluate(self, *, context: None, iterable: Optional[Iterable[TAny]]=None, args: Optional[List[TAny]]=None, key: Optional[TCallable[[TAny], TAny]]=None) -> TAny:
