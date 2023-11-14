@@ -69,7 +69,7 @@ class Max(Expression[TAny, None]):
         elif args:
             return max(*args, key=key)
         else:
-            raise Exception()
+            raise Exception("Op.Max used without iterable or args")
 
 class Ascii(Expression[str, None]):
     def evaluate(self, *, context: None, obj: TAny=REQUIRED) -> str:
