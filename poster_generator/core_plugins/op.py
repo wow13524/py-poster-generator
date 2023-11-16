@@ -54,11 +54,11 @@ class Len(Expression[int, None]):
         return len(obj)
     
 class Min(Expression[TAny, None]):
-    def evaluate(self, *, context: None, iterable: Optional[Iterable[TAny]]=None, args: Optional[List[TAny]]=None, key: Optional[TCallable[[TAny], TAny]]=None) -> TAny:
+    def evaluate(self, *, context: None, iterable: Optional[Iterable[TAny]]=None, args: Optional[List[TAny]]=None, default: Optional[TAny]=None, key: Optional[TCallable[[TAny], TAny]]=None) -> TAny:
         if iterable:
-            return min(iterable, key=key)
+            return min(iterable, default=default, key=key)
         elif args:
-            return min(*args, key=key)
+            return min(*args, default=default, key=key)
         else:
             raise Exception("Op.Min used without iterable or args")
     
